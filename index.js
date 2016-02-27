@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 let route = require('./route')
 
 require('subcmd')({
