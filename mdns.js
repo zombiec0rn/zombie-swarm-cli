@@ -9,15 +9,18 @@ export default function(args) {
   return mdns
 }
 
-export function bindZwarmResponse(mdns) {
+export function onResponse(mdns, callback, timer) {
+  let answers = []
   mdns.on('response', (res) => {
     let swarmAnswers = res.answers.reduce((found, answer) => {
-      if (answer.name == 'zombie-swarm') found = res.answers
+      if (answer.name.endsWith('zombie-swarm')) found = res.answers
       return found
     }, null)
-    if (!swarmAnswers) return
-    console.log('answers', swarmAnswers)
+    if (swarmAnswers) answers = answers.concat(swarmAnswers)
   })
+  setTimeout(() => {
+    callback(answers)
+  }, timer)
 }
 
 export function query(mdns) {

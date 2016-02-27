@@ -1,4 +1,6 @@
+let prettyjson = require('prettyjson')
 let route = require('../route')
+let _mdns = require('../mdns')
 
 let cmd = {
   name: 'ls',
@@ -7,7 +9,14 @@ let cmd = {
   command: function(args) {
     global.args = args
     route.add(args)
-    console.log('lsing')
+    let mdns = _mdns.default(args)
+    _mdns.onResponse(mdns, (answers) => {
+      console.log(prettyjson.render(answers))
+      mdns.destroy()
+      process.exit()
+    }, 5000)
+    _mdns.query(mdns)
+    console.log('Querying for swarm nodes...') 
   }
 }
 
