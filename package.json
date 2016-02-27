@@ -9,8 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "iproute": "^0.7.0",
     "js-yaml": "^3.5.3",
-    "multicast-dns": "git+ssh://git@github.com:mafintosh/multicast-dns.git#d87efa1bbc03dec598a8058240204a11c1fd7508" 
+    "multicast-dns": "^6.0.0"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.5.0"
