@@ -1,4 +1,6 @@
 let prettyjson = require('prettyjson')
+let request = require('request')
+let async = require('async')
 let route = require('../route')
 let _mdns = require('../mdns')
 
@@ -11,9 +13,17 @@ let cmd = {
     route.add(args)
     let mdns = _mdns.default(args)
     _mdns.onResponse(mdns, (answers) => {
-      console.log(prettyjson.render(answers))
-      mdns.destroy()
-      process.exit()
+      async.map(answers, (a, callback) => {
+        request(`http://${a.data}:8901`, (err, res, body) => {
+          if (res.statusCode != 200) return callback(err, a)
+          callback(err, JSON.parse(body))
+        })
+      }, (err, res) => {
+        if (err) throw err
+        console.log(prettyjson.render(res))
+        mdns.destroy()
+        process.exit()
+      })
     }, 5000)
     _mdns.query(mdns)
     console.log('Querying for swarm nodes...') 
