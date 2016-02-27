@@ -1,10 +1,13 @@
 {
-  "name": "zombie-swarm",
+  "name": "@asbjornenge/zombie-swarm-cli",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build-js && npm run build-sub",
+    "build-js": "babel --presets es2015 *.js --out-dir build",
+    "build-sub": "babel --presets es2015 sub-commands --out-dir build/sub-commands"
   },
   "author": "",
   "license": "ISC",
