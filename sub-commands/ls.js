@@ -16,7 +16,9 @@ let cmd = {
       async.map(answers, (a, callback) => {
         request(`http://${a.data}:8901`, (err, res, body) => {
           if (res.statusCode != 200) return callback(err, a)
-          callback(err, JSON.parse(body))
+          let info = JSON.parse(body)
+          info.ip = a.data
+          callback(err, info)
         })
       }, (err, res) => {
         if (err) throw err
