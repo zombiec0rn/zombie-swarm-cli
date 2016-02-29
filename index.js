@@ -4,11 +4,17 @@ let utils = require('./utils')
 
 require('subcmd')({
     name : 'zombie-swarm',
-    usage : 'Usage: zombie-swarm [COMMAND] [OPTIONS]',
+    usage : `Usage: zombie-swarm [COMMAND] [OPTIONS]
+
+COMMAND(s)
+
+  ls - list swarm nodes
+
+OPTIONS
+`,
     options : [].concat(utils.defaultOptions),
-    command : function(args) {
-      utils.initCmd(args)
-      console.log('default, what to do?', args)
+    command : function(args, cliclopts) {
+      console.log(cliclopts.usage())
     },
     commands : [
       require('./sub-commands/ls').default
@@ -16,17 +22,3 @@ require('subcmd')({
 },{
     autoHelp : true
 })(process.argv.slice(2))
-
-
-//so the program will not close instantly
-process.stdin.resume();
-function exitHandler(err) {
-  route.del(args, () => {
-    process.exit()
-  })
-}
-
-//do something when app is closing
-process.on('exit', exitHandler)
-process.on('SIGINT', exitHandler)
-process.on('uncaughtException', exitHandler)

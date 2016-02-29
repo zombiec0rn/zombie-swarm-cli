@@ -3,8 +3,26 @@ let route = require('./route')
 let async = require('async')
 let _mdns = require('./mdns')
 
+// NOTE:
+// `initCmd` needs to be called whenever mdns is involved.
+// It creates a `route` for mdns packets -> interface
+// and hooks up listeners to remove this route when app exits. 
 export function initCmd(args) {
-  global.args = args
+  // Prevent app from closing immediately
+  process.stdin.resume()
+  // exitHandler
+  function exitHandler(err) {
+    route.del(args, () => {
+      process.exit()
+    })
+  }
+
+  // Call exitHandler on exit
+  process.on('exit', exitHandler)
+  process.on('SIGINT', exitHandler)
+  process.on('uncaughtException', exitHandler)
+
+  // Add route
   route.add(args)
 }
 
