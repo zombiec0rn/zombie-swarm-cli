@@ -2,30 +2,16 @@
 'use strict';
 
 var route = require('./route');
+var utils = require('./utils');
 
 require('subcmd')({
-  name: 'zombie-swarm',
-  usage: 'Usage: zombie-swarm [COMMAND] [OPTIONS]',
-  options: [],
-  command: function command(args) {
-    global.args = args;
-    route.add(args);
-    console.log('default, what to do?', args);
-  },
-  commands: [require('./sub-commands/ls').default]
+    name: 'zombie-swarm',
+    usage: 'Usage: zombie-swarm [COMMAND] [OPTIONS]\n\nCOMMAND(s)\n\n  ls - list swarm nodes\n\nOPTIONS\n',
+    options: [].concat(utils.defaultOptions),
+    command: function command(args, cliclopts) {
+        console.log(cliclopts.usage());
+    },
+    commands: [require('./sub-commands/ls').default]
 }, {
-  autoHelp: true
+    autoHelp: true
 })(process.argv.slice(2));
-
-//so the program will not close instantly
-process.stdin.resume();
-function exitHandler(err) {
-  route.del(args, function () {
-    process.exit();
-  });
-}
-
-//do something when app is closing
-process.on('exit', exitHandler);
-process.on('SIGINT', exitHandler);
-process.on('uncaughtException', exitHandler);

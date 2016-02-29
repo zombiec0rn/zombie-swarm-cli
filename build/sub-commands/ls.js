@@ -5,33 +5,33 @@ Object.defineProperty(exports, "__esModule", {
 });
 var prettyjson = require('prettyjson');
 var request = require('request');
-var async = require('async');
-var route = require('../route');
-var _mdns = require('../mdns');
+var utils = require('../utils');
 
 var cmd = {
   name: 'ls',
   usage: 'Usage: zombie-swarm ls [OPTIONS]',
-  options: [],
+  options: utils.defaultOptions.concat([{
+    name: 'verbose',
+    abbr: 'v',
+    boolean: true,
+    help: 'Verbose (output all the node info)'
+  }]),
   command: function command(args) {
-    global.args = args;
-    route.add(args);
-    var mdns = _mdns.default(args);
-    _mdns.onResponse(mdns, function (answers) {
-      async.map(answers, function (a, callback) {
-        request('http://' + a.data + ':8901', function (err, res, body) {
-          if (res.statusCode != 200) return callback(err, a);
-          callback(err, JSON.parse(body));
-        });
-      }, function (err, res) {
-        if (err) throw err;
-        console.log(prettyjson.render(res));
-        mdns.destroy();
-        process.exit();
+    utils.initCmd(args);
+    utils.validateArgs(args);
+    console.log('Looking for swarm nodes on ' + args.interface + '...');
+    utils.querySwarmNodes(function (err, nodes) {
+      if (err) throw err;
+      var formatted = nodes.map(function (node) {
+        if (args.verbose) return node;
+        return {
+          node: node.hostname + '.' + node.swarm,
+          tags: node.tags
+        };
       });
-    }, 5000);
-    _mdns.query(mdns);
-    console.log('Querying for swarm nodes...');
+      console.log(prettyjson.render(formatted));
+      process.exit();
+    }, args, 5000);
   }
 };
 

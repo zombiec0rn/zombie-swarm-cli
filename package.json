@@ -7,10 +7,10 @@
     "zombie-swarm": "./build/index.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build-js && npm run build-sub",
     "build-js": "babel --presets es2015 *.js --out-dir build",
-    "build-sub": "babel --presets es2015 sub-commands --out-dir build/sub-commands"
+    "build-sub": "babel --presets es2015 sub-commands --out-dir build/sub-commands",
+    "prepublish": "npm run build"
   },
   "author": "",
   "license": "ISC",
