@@ -8,6 +8,7 @@ let cmd = {
   options: utils.defaultOptions.concat([{
     name: 'verbose',
     abbr: 'v',
+    boolean: true,
     help: 'Verbose (output all the node info)'
   }]),
   command: function(args) {
@@ -16,7 +17,14 @@ let cmd = {
     console.log(`Looking for swarm nodes on ${args.interface}...`)
     utils.querySwarmNodes((err, nodes) => {
       if (err) throw err
-      console.log(prettyjson.render(nodes))
+      let formatted = nodes.map((node) => {
+        if (args.verbose) return node
+        return {
+          node: `${node.hostname}.${node.swarm}`,
+          tags: node.tags
+        }
+      })
+      console.log(prettyjson.render(formatted))
       process.exit()
     }, args, 5000) 
   }
