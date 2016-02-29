@@ -2,54 +2,59 @@ version: 1
 swarm: asbjornenge
 
 services:
-    default:
-        logging:
-            driver: "json-file"
-            options:
-                max-size: "1m"
-                max-file: "2"
-        network:
-            - asbjornenge
-        dns:
-            - 10.191.10.55
-    gateway:
-        image: asbjornenge/gateway:1.0.0
-        ports:
-            - "80:80"
-        placement:
-            - gateway
-    external-dns:
-        image: asbjornenge/external-dns:1.0.0
-        ports:
-            - "53:53"
-        placement:
-            - gateway
+  default:
+    docker:
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "1m"
+          max-file: "2"
     dns:
-        image: asbjornenge/dns:1.0.0
-        ports:
-            - "53:53"
-        placement:
-            - dns-host
-        network:
-            asbjornenge:
-                ip: 10.191.10.55
-    registry:
+      - 10.191.10.55
+    network:
+      - asbjornenge
+  gateway:
+    placement:
+      - gateway
+    docker:
+      image: asbjornenge/gateway:1.0.0
+      ports:
+        - "80:80"
+  external-dns:
+    placement:
+      - gateway
+    docker:
+      image: asbjornenge/external-dns:1.0.0
+      ports:
+        - "53:53"
+  dns:
+    placement:
+      - dns-host
+    docker:
+      image: asbjornenge/dns:1.0.0
+      ports:
+        - "53:53"
+    network:
+      asbjornenge:
+        ip: 10.191.10.55
+  registry:
+      docker:
         image: docker/registry:2.3
-        placement:
-            - registry-disk
+      placement:
+          - registry-disk
 
-    # ReadLink
-    readlink-app:
-        image: asbjornenge/readlink-app:1.0.0  
-    readlink-api:
-        image: asbjornenge/readlink-api:1.0.0  
+  # ReadLink
+  #readlink-app:
+  #    image: asbjornenge/readlink-app:1.0.0  
+  #readlink-api:
+  #    image: asbjornenge/readlink-api:1.0.0  
 
-    # ClubHut
-    clubhut-app:
-        image: asbjornenge/clubhut-app:1.0.0 
+  # ClubHut
+  #clubhut-app:
+  #    image: asbjornenge/clubhut-app:1.0.0 
 
 networks:
-    asbjornenge:
-        driver: zerotier
-        id: "123"
- 
+  asbjornenge:
+      driver: zerotier
+      id: "123"
+

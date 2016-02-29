@@ -9,6 +9,8 @@ require('subcmd')({
 COMMAND(s)
 
   ls - list swarm nodes
+  plan - create a plan
+  apply - apply a plan
 
 OPTIONS
 `,
@@ -17,7 +19,8 @@ OPTIONS
       console.log(cliclopts.usage())
     },
     commands : [
-      require('./sub-commands/ls').default
+      require('./sub-commands/ls').default,
+      require('./sub-commands/plan').default
     ]
 },{
     autoHelp : true
