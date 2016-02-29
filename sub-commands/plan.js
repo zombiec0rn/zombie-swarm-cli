@@ -24,6 +24,7 @@ OPTIONS
     utils.querySwarmNodes((err, nodes) => {
       if (err) throw err
       let plan = config.createPlan(swarmstat, nodes)
+      console.log(plan)
       process.exit()
     }, args, 5000) 
   }

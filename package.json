@@ -7,6 +7,7 @@
     "zombie-swarm": "./build/index.js"
   },
   "scripts": {
+    "test": "ava --watch",
     "build": "npm run build-js && npm run build-sub",
     "build-js": "babel --presets es2015 *.js --out-dir build",
     "build-sub": "babel --presets es2015 sub-commands --out-dir build/sub-commands",
@@ -25,6 +26,8 @@
     "request": "^2.69.0"
   },
   "devDependencies": {
-    "babel-preset-es2015": "^6.5.0"
+    "babel-preset-es2015": "^6.5.0",
+    "ava": "^0.12.0",
+    "chokidar": "^1.4.3"
   }
 }
