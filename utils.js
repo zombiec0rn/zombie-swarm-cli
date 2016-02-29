@@ -8,6 +8,21 @@ export function initCmd(args) {
   route.add(args)
 }
 
+let defaultOptions = [
+  {
+    name: 'interface',
+    help: 'Which interface to use (required)'
+  }
+]
+export { defaultOptions }
+
+export function validateArgs(args) {
+  if (!args.interface) {
+    console.log('Missing required argument `interface`. Exiting...')
+    process.exit(1)
+  }
+}
+
 export function querySwarmNodes(callback, args, queryTime) {
   queryTime = queryTime || 5000
   let mdns = _mdns.default(args)

@@ -1,13 +1,11 @@
 #!/usr/bin/env node
+let route = require('./route')
 let utils = require('./utils')
 
 require('subcmd')({
     name : 'zombie-swarm',
     usage : 'Usage: zombie-swarm [COMMAND] [OPTIONS]',
-    options : [{
-      name: 'interface',
-      help: 'Which interface to use (required)'
-    }],
+    options : [].concat(utils.defaultOptions),
     command : function(args) {
       utils.initCmd(args)
       console.log('default, what to do?', args)
