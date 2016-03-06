@@ -1,3 +1,5 @@
+import Table from 'cli-table'
+import assign from 'object.assign'
 let prettyjson = require('prettyjson')
 let request = require('request')
 let Ora = require('ora')
@@ -12,10 +14,6 @@ List swarm nodes.
 OPTIONS
 `,
   options: utils.defaultOptions.concat([{
-    name: 'verbose',
-    abbr: 'v',
-    boolean: true,
-    help: 'Verbose (output all the node info)'
   }]),
   command: function(args) {
     utils.initCmd(args)
@@ -24,18 +22,37 @@ OPTIONS
     spinner.start()
     utils.querySwarmNodes((err, nodes) => {
       spinner.stop()
-      if (err) throw err
-      let formatted = nodes.map((node) => {
-        if (args.verbose) return node
-        return {
-          node: `${node.hostname}.${node.swarm}`,
-          tags: node.tags
-        }
-      })
-      console.log(prettyjson.render(formatted))
+      if (err) return console.error(err)
+      if (nodes.length == 0) return console.log(`No swarm nodes found on ${args.interface} ¯\_(ツ)_/¯`) 
+      console.log(makeTable(nodes, args).toString())
       process.exit()
     }, args, 5000) 
   }
+}
+
+function makeTable(nodes, args) {
+  let formatted = nodes.map((node) => {
+    return {
+      node: node.hostname,
+      swarm: node.swarm, 
+      tags: node.tags.join(','),
+      ip: node.ip,
+      engines: node.engines.join(','),
+      memory: node.memory,
+      cpus: `${node.cpus.length} x ${node.cpus[0].speed}`
+    }
+  })
+
+  let table = new Table({
+    head: Object.keys(formatted[0]).map(h => h.green),
+    chars: { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': ''
+          , 'bottom': '' , 'bottom-mid': '' , 'bottom-left': '' , 'bottom-right': ''
+          , 'left': '' , 'left-mid': '' , 'mid': '' , 'mid-mid': ''
+          , 'right': '' , 'right-mid': '' , 'middle': ' ' },
+    style: { 'padding-left': 0, 'padding-right': 0 }
+  })
+  formatted.forEach(f => { table.push(Object.values(f)) })
+  return table
 }
 
 export { cmd as default }
