@@ -4,13 +4,12 @@ swarm: asbjornenge
 services:
   default:
     docker:
-      logging:
-        driver: "json-file"
-        options:
-          max-size: "1m"
-          max-file: "2"
-    dns:
-      - 10.191.10.55
+#      log-driver: "json-file"
+#      log-opt:
+#        max-size: "1m"
+#        max-file: "2"
+      dns:
+        - 10.191.10.55
     network:
       - asbjornenge
   gateway:
@@ -38,20 +37,23 @@ services:
       asbjornenge:
         ip: 10.191.10.55
   registry:
-      docker:
-        image: docker/registry:2.3
       placement:
           - registry-disk
+      docker:
+        image: docker/registry:2.3
 
   # ReadLink
-  #readlink-app:
-  #    image: asbjornenge/readlink-app:1.0.0  
-  #readlink-api:
-  #    image: asbjornenge/readlink-api:1.0.0  
+  readlink-app:
+      docker:
+        image: asbjornenge/readlink-app:1.0.0  
+  readlink-api:
+      docker:
+        image: asbjornenge/readlink-api:1.0.0  
 
   # ClubHut
-  #clubhut-app:
-  #    image: asbjornenge/clubhut-app:1.0.0 
+  clubhut-app:
+      docker:
+        image: asbjornenge/clubhut-app:1.0.0 
 
 networks:
   asbjornenge:

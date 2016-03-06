@@ -1,5 +1,6 @@
 let prettyjson = require('prettyjson')
 let request = require('request')
+let Ora = require('ora')
 let utils = require('../utils')
 
 let cmd = {
@@ -19,8 +20,10 @@ OPTIONS
   command: function(args) {
     utils.initCmd(args)
     utils.validateArgs(args)
-    console.log(`Looking for swarm nodes on ${args.interface}...`)
+    const spinner = new Ora({ text: `Looking for swarm nodes on ${args.interface}...` })
+    spinner.start()
     utils.querySwarmNodes((err, nodes) => {
+      spinner.stop()
       if (err) throw err
       let formatted = nodes.map((node) => {
         if (args.verbose) return node

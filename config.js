@@ -1,10 +1,15 @@
 import fs      from 'fs'
 import yaml    from 'js-yaml'
+import cdi     from 'cccf-docker-instructions'
+import assign  from 'object.assign'
 
 let engines = {
   docker: {
-    createServicePlan: function(service) {
-      return `docker run -d ${service.image}` 
+    createServicePlan: function(serviceName, service, _default) {
+      _default = _default || {}
+      let _service = {}
+      assign(_service, service, { id: serviceName }, _default)
+      return cdi.run(_service) 
     }
   }
 }
@@ -19,23 +24,9 @@ export function readConfigFile(args) {
 }
 
 export function createPlan(swarm, nodes) {
-  // What should be created?
-  let _default = swarm.services.default
-  delete swarm.services.default
-  let plan = []
-  for (let serviceName in swarm.services) {
-    let service = swarm.services[serviceName]
-    console.log(service)
-  }
-
-//  let services = Object.keys(plan.services).map(serviceName => {
-//    let service = plan.services[serviceName]
-//    let _service
-//    Object.keys(engines).forEach(engine => {
-//      console.log(engine, service[engine])
-//      if (service[engine]) _service = service[engine].createServicePlan(service)
-//    })
-//    return _service
-//  })
-  return plan 
+  let current = getCurrent(nodes)
+  let wanted  = getWanted(swarm)
+  let hosts   = getHosts(nodes)
+  let plan    = scheduler.spread(hosts, wanted, current) 
+  return formatPlan(plan) 
 }
