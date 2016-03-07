@@ -13,6 +13,7 @@ export function initCmd(args) {
   // exitHandler
   function exitHandler(err) {
     route.del(args, () => {
+      console.error(err)
       process.exit()
     })
   }
