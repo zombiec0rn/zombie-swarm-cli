@@ -1,6 +1,6 @@
+import fs from 'fs'
 import Table from 'cli-table'
 import assign from 'object.assign'
-let prettyjson = require('prettyjson')
 let request = require('request')
 let Ora = require('ora')
 let utils = require('../utils')
@@ -14,6 +14,8 @@ List swarm nodes.
 OPTIONS
 `,
   options: utils.defaultOptions.concat([{
+    name: 'out-file',
+    help: 'File to dump the discovered swarm nodes (.json - can be used as plan input)'
   }]),
   command: function(args) {
     utils.initCmd(args)
@@ -24,6 +26,7 @@ OPTIONS
       spinner.stop()
       if (err) return console.error(err)
       if (nodes.length == 0) return console.log(`No swarm nodes found on ${args.interface} ¯\_(ツ)_/¯`) 
+      if (args['out-file']) fs.writeFileSync(args['out-file'], JSON.stringify(nodes, null, 2))
       console.log(makeTable(nodes, args).toString())
       process.exit()
     }, args, 5000) 
