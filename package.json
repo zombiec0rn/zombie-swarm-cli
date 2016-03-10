@@ -1,7 +1,7 @@
 {
   "name": "@asbjornenge/zombie-swarm-cli",
   "version": "1.0.1",
-  "description": "",
+  "description": "Zombie Swarm Cli",
   "main": "index.js",
   "bin": {
     "zombie-swarm": "./build/index.js"
@@ -13,8 +13,8 @@
     "build-sub": "babel --presets es2015 sub-commands --out-dir build/sub-commands",
     "prepublish": "npm run build"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Asbjorn Enge <asbjorn@hanafjedle.net>",
+  "license": "BSD-2-Clause",
   "dependencies": {
     "@zombiec0rn/zombie-node-format": "^1.0.1",
     "@zombiec0rn/zombie-service-diff": "^1.0.1",
@@ -38,9 +38,24 @@
     "chokidar": "^1.4.3",
     "babel-register": "^6.5.2"
   },
+  "keywords": [
+    "zombie-swarm",
+    "zombiec0rn"
+  ],
   "babel": {
     "presets": [
       "es2015"
     ]
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zombiec0rn/zombie-swarm-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zombiec0rn/zombie-swarm-cli/issues"
+  },
+  "homepage": "https://github.com/zombiec0rn/zombie-swarm-cli#readme"
 }
