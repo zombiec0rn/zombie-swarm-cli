@@ -17,6 +17,10 @@ var _object = require('object.assign');
 
 var _object2 = _interopRequireDefault(_object);
 
+var _object3 = require('object.values');
+
+var _object4 = _interopRequireDefault(_object3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var request = require('request');
@@ -70,7 +74,7 @@ function makeTable(nodes, args) {
     style: { 'padding-left': 0, 'padding-right': 0 }
   });
   formatted.forEach(function (f) {
-    table.push(Object.values(f));
+    table.push((0, _object4.default)(f));
   });
   return table;
 }

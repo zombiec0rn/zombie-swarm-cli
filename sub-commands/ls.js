@@ -1,6 +1,7 @@
 import fs from 'fs'
 import Table from 'cli-table'
 import assign from 'object.assign'
+import values from 'object.values'
 let request = require('request')
 let Ora = require('ora')
 let utils = require('../utils')
@@ -54,7 +55,7 @@ function makeTable(nodes, args) {
           , 'right': '' , 'right-mid': '' , 'middle': ' ' },
     style: { 'padding-left': 0, 'padding-right': 0 }
   })
-  formatted.forEach(f => { table.push(Object.values(f)) })
+  formatted.forEach(f => { table.push(values(f)) })
   return table
 }
 
