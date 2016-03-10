@@ -1,6 +1,6 @@
 {
   "name": "@zombiec0rn/zombie-swarm-cli",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Zombie Swarm Cli",
   "main": "index.js",
   "bin": {
