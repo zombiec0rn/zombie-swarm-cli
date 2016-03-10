@@ -21,6 +21,7 @@ function initCmd(args) {
   // exitHandler
   function exitHandler(err) {
     route.del(args, function () {
+      console.error(err);
       process.exit();
     });
   }
