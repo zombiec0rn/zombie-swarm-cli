@@ -12,8 +12,10 @@ npm install -g @zombiec0rn/zombie-swarm-cli
 
 ## Use
 
+Needs to be run with `sudo` because it creates a temporary `route` to ensure multicast on correct interface.
+
 ```
-zombie-swarm ls --interface eth0
+sudo zombie-swarm ls --interface eth0
 ```
 
 ## Options
