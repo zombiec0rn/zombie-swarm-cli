@@ -5,6 +5,7 @@ import yaml    from 'js-yaml'
 import assign  from 'object.assign'
 import zsf     from '@zombiec0rn/zombie-service-format'
 import znf     from '@zombiec0rn/zombie-node-format'
+import Ora     from 'ora'
 import * as route from './route'
 import * as mdns from './mdns'
 
@@ -95,6 +96,8 @@ export function validateNodes(nodes) {
 export function querySwarmNodes(callback, args, queryTime) {
   queryTime = queryTime || 5000
   let _mdns = mdns.default(args)
+  let spinner = new Ora({ text: `Looking for swarm nodes on ${args.interface}...` }) 
+  spinner.start()
   mdns.onResponse(_mdns, (answers) => {
     async.map(answers, (a, cb) => {
       request(`http://${a.data}:8901`, (err, res, body) => {
@@ -105,6 +108,7 @@ export function querySwarmNodes(callback, args, queryTime) {
       })
     }, (err, res) => {
       _mdns.destroy()
+      spinner.stop()
       callback(err, res)
     })
   }, queryTime)

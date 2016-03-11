@@ -4,7 +4,6 @@ import assign  from 'object.assign'
 import values  from 'object.values'
 import chalk   from 'chalk'
 import request from 'request'
-import Ora     from 'ora'
 import * as utils from '../utils'
 require('colors')
 
@@ -23,10 +22,7 @@ OPTIONS
   command: function(args) {
     utils.initCmd(args)
     utils.validateArgs(args)
-    const spinner = new Ora({ text: `Looking for swarm nodes on ${args.interface}...` })
-    spinner.start()
     utils.querySwarmNodes((err, nodes) => {
-      spinner.stop()
       if (err) return console.error(err)
       if (nodes.length == 0) return console.log(`No swarm nodes found on ${args.interface} ¯\_(ツ)_/¯`) 
       if (args['out-file']) fs.writeFileSync(args['out-file'], JSON.stringify(nodes, null, 2))

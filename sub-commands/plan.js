@@ -1,4 +1,5 @@
-import request from 'request'
+import request    from 'request'
+import makePlan   from '../plan'
 import * as utils from '../utils'
 
 let cmd = {
@@ -17,11 +18,10 @@ OPTIONS
   command: function(args) {
     utils.initCmd(args)
     utils.validateArgs(args)
-    let swarmstat = utils.readConfigFile(args) 
-    console.log(`Looking for swarm nodes on ${args.interface}...`)
+    let swarm = utils.readSwarmConfig(args.file) 
     utils.querySwarmNodes((err, nodes) => {
       if (err) throw err
-      let plan = config.createPlan(swarmstat, nodes)
+      let plan = makePlan(nodes, swarm.services)
       console.log(plan)
       process.exit()
     }, args, 5000) 
