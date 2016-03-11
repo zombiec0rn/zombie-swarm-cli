@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-let route = require('./route')
-let utils = require('./utils')
+import * as route from './route'
+import * as utils from './utils'
 
 require('subcmd')({
     name : 'zombie-swarm',
