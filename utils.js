@@ -4,8 +4,8 @@ import async   from 'async'
 import yaml    from 'js-yaml'
 import assign  from 'object.assign'
 import zsf     from '@zombiec0rn/zombie-service-format'
-import route   from './route'
-import _mdns   from './mdns'
+import * as route from './route'
+import * as mdns from './mdns'
 
 // NOTE:
 // `initCmd` needs to be called whenever mdns is involved.
@@ -79,8 +79,8 @@ export function validateServices(services) {
 
 export function querySwarmNodes(callback, args, queryTime) {
   queryTime = queryTime || 5000
-  let mdns = _mdns.default(args)
-  _mdns.onResponse(mdns, (answers) => {
+  let _mdns = mdns.default(args)
+  mdns.onResponse(_mdns, (answers) => {
     async.map(answers, (a, cb) => {
       request(`http://${a.data}:8901`, (err, res, body) => {
         if (res.statusCode != 200) return cb(err, a)
@@ -89,9 +89,9 @@ export function querySwarmNodes(callback, args, queryTime) {
         cb(err, info)
       })
     }, (err, res) => {
-      mdns.destroy()
+      _mdns.destroy()
       callback(err, res)
     })
   }, queryTime)
-  _mdns.query(mdns)
+  mdns.query(_mdns)
 }
