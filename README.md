@@ -4,7 +4,7 @@ Command line interface to [zombie swarm]().
 
 Used to query and manipulate zombie swarms.
 
-![ls](zombie-swarm-cli-ls.gif)
+[![asciicast](https://asciinema.org/a/3gdyjmwyg19iflktg51l30dpw.png)](https://asciinema.org/a/3gdyjmwyg19iflktg51l30dpw)
 
 ## Install
 
