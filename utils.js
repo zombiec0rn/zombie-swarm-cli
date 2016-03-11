@@ -1,7 +1,11 @@
-let request = require('request')
-let route = require('./route')
-let async = require('async')
-let _mdns = require('./mdns')
+import fs      from 'fs'
+import request from 'request'
+import async   from 'async'
+import yaml    from 'js-yaml'
+import assign  from 'object.assign'
+import zsf     from '@zombiec0rn/zombie-service-format'
+import route   from './route'
+import _mdns   from './mdns'
 
 // NOTE:
 // `initCmd` needs to be called whenever mdns is involved.
@@ -42,13 +46,35 @@ export function validateArgs(args) {
   }
 }
 
-export function readConfigFile(args) {
+export function readConfigFileRaw(args) {
   try {
     return yaml.safeLoad(fs.readFileSync(args.file))
   } catch(e) {
     throw e
     process.exit(1)
   }
+}
+
+export function formatConfigFile(config) {
+  let defaultServiceConfig = config.services.default || {}
+  config.services = Object.keys(config.services)
+    .filter(k => k != 'default')
+    .map(k => {
+      let serviceConfig = config.services[k]
+      serviceConfig.id = k
+      return assign({}, config.services[k], defaultServiceConfig)
+    })
+  return config
+}
+
+export function readConfigFile(args) {
+  let raw = readConfigFileRaw(args)
+  let formatted = formatConfigFile(raw)
+  return formatted
+}
+
+export function validateServices(services) {
+  return zsf.validate(services)
 }
 
 export function querySwarmNodes(callback, args, queryTime) {

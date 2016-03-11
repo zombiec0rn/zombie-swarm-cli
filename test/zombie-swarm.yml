@@ -3,60 +3,42 @@ swarm: asbjornenge
 
 services:
   default:
-    docker:
-#      log-driver: "json-file"
-#      log-opt:
-#        max-size: "1m"
-#        max-file: "2"
-      dns:
-        - 10.191.10.55
-    network:
-      - asbjornenge
+    dns:
+      - 10.191.10.55
   gateway:
     placement:
       - gateway
-    docker:
-      image: asbjornenge/gateway:1.0.0
-      ports:
-        - "80:80"
+    image: asbjornenge/gateway:1.0.0
+    ports:
+      - "80:80"
+    driver: docker
   external-dns:
     placement:
       - gateway
-    docker:
-      image: asbjornenge/external-dns:1.0.0
-      ports:
-        - "53:53"
+    image: asbjornenge/external-dns:1.0.0
+    ports:
+      - "53:53"
+    driver: docker
   dns:
     placement:
       - dns-host
-    docker:
-      image: asbjornenge/dns:1.0.0
-      ports:
-        - "53:53"
-    network:
-      asbjornenge:
-        ip: 10.191.10.55
+    image: asbjornenge/dns:1.0.0
+    ports:
+      - "53:53"
+    driver: docker
   registry:
-      placement:
-          - registry-disk
-      docker:
-        image: docker/registry:2.3
+    placement:
+        - registry-disk
+    image: docker/registry:2.3
+    driver: docker
 
   # ReadLink
   readlink-app:
-      docker:
-        image: asbjornenge/readlink-app:1.0.0  
+    image: asbjornenge/readlink-app:1.0.0  
   readlink-api:
-      docker:
-        image: asbjornenge/readlink-api:1.0.0  
+    image: asbjornenge/readlink-api:1.0.0  
 
   # ClubHut
   clubhut-app:
-      docker:
-        image: asbjornenge/clubhut-app:1.0.0 
-
-networks:
-  asbjornenge:
-      driver: zerotier
-      id: "123"
+    image: asbjornenge/clubhut-app:1.0.0 
 
