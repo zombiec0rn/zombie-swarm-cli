@@ -1,10 +1,12 @@
-import fs from 'fs'
-import Table from 'cli-table'
-import assign from 'object.assign'
-import values from 'object.values'
-let request = require('request')
-let Ora = require('ora')
-let utils = require('../utils')
+import fs      from 'fs'
+import Table   from 'cli-table'
+import assign  from 'object.assign'
+import values  from 'object.values'
+import chalk   from 'chalk'
+import request from 'request'
+import Ora     from 'ora'
+import * as utils from '../utils'
+require('colors')
 
 let cmd = {
   name: 'ls',
@@ -28,7 +30,8 @@ OPTIONS
       if (err) return console.error(err)
       if (nodes.length == 0) return console.log(`No swarm nodes found on ${args.interface} ¯\_(ツ)_/¯`) 
       if (args['out-file']) fs.writeFileSync(args['out-file'], JSON.stringify(nodes, null, 2))
-      console.log(makeTable(nodes, args).toString())
+      let table = makeTable(nodes, args)
+      console.log(table.toString())
       process.exit()
     }, args, 5000) 
   }

@@ -14,15 +14,6 @@ let engines = {
   }
 }
 
-export function readConfigFile(args) {
-  try {
-    return yaml.safeLoad(fs.readFileSync(args.file))
-  } catch(e) {
-    throw e
-    process.exit(1)
-  }
-}
-
 export function createPlan(swarm, nodes) {
   let current = getCurrent(nodes)
   let wanted  = getWanted(swarm)

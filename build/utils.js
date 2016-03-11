@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.initCmd = initCmd;
 exports.validateArgs = validateArgs;
+exports.readConfigFile = readConfigFile;
 exports.querySwarmNodes = querySwarmNodes;
 var request = require('request');
 var route = require('./route');
@@ -43,6 +44,15 @@ exports.defaultOptions = defaultOptions;
 function validateArgs(args) {
   if (!args.interface) {
     console.log('Missing required argument `interface`. Exiting...');
+    process.exit(1);
+  }
+}
+
+function readConfigFile(args) {
+  try {
+    return yaml.safeLoad(fs.readFileSync(args.file));
+  } catch (e) {
+    throw e;
     process.exit(1);
   }
 }

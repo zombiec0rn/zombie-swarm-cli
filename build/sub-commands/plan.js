@@ -3,25 +3,32 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var prettyjson = require('prettyjson');
-var request = require('request');
-var utils = require('../utils');
-var config = require('../config');
+exports.default = undefined;
+
+var _request = require('request');
+
+var _request2 = _interopRequireDefault(_request);
+
+var _utils = require('../utils');
+
+var _utils2 = _interopRequireDefault(_utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var cmd = {
   name: 'plan',
   usage: 'Usage: zombie-swarm plan [OPTIONS]\n\nCreate a plan for zombie placement.\n\nOPTIONS\n',
-  options: utils.defaultOptions.concat([{
+  options: _utils2.default.defaultOptions.concat([{
     name: 'file',
     default: './zombie-swarm.yml',
     help: 'Path to zombie-swarm file (default ./zombie-swarm.yml)'
   }]),
   command: function command(args) {
-    utils.initCmd(args);
-    utils.validateArgs(args);
-    var swarmstat = config.readConfigFile(args);
+    _utils2.default.initCmd(args);
+    _utils2.default.validateArgs(args);
+    var swarmstat = _utils2.default.readConfigFile(args);
     console.log('Looking for swarm nodes on ' + args.interface + '...');
-    utils.querySwarmNodes(function (err, nodes) {
+    _utils2.default.querySwarmNodes(function (err, nodes) {
       if (err) throw err;
       var plan = config.createPlan(swarmstat, nodes);
       console.log(plan);

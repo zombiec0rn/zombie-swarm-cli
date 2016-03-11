@@ -42,6 +42,15 @@ export function validateArgs(args) {
   }
 }
 
+export function readConfigFile(args) {
+  try {
+    return yaml.safeLoad(fs.readFileSync(args.file))
+  } catch(e) {
+    throw e
+    process.exit(1)
+  }
+}
+
 export function querySwarmNodes(callback, args, queryTime) {
   queryTime = queryTime || 5000
   let mdns = _mdns.default(args)

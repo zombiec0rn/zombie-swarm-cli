@@ -21,11 +21,21 @@ var _object3 = require('object.values');
 
 var _object4 = _interopRequireDefault(_object3);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _request = require('request');
 
-var request = require('request');
-var Ora = require('ora');
-var utils = require('../utils');
+var _request2 = _interopRequireDefault(_request);
+
+var _ora = require('ora');
+
+var _ora2 = _interopRequireDefault(_ora);
+
+var _utils = require('../utils');
+
+var utils = _interopRequireWildcard(_utils);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var cmd = {
   name: 'ls',
@@ -37,7 +47,7 @@ var cmd = {
   command: function command(args) {
     utils.initCmd(args);
     utils.validateArgs(args);
-    var spinner = new Ora({ text: 'Looking for swarm nodes on ' + args.interface + '...' });
+    var spinner = new _ora2.default({ text: 'Looking for swarm nodes on ' + args.interface + '...' });
     spinner.start();
     utils.querySwarmNodes(function (err, nodes) {
       spinner.stop();

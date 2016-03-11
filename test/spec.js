@@ -19,6 +19,9 @@ let nodes = [
   }
 ]
 
+// test parse zombie-swarm -> valid zsf
+// test createPlan
+
 test('createPlan', t => {
   let plan = config.createPlan(swarmstat, nodes)
   console.log(plan)

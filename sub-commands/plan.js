@@ -1,7 +1,5 @@
-let prettyjson = require('prettyjson')
-let request = require('request')
-let utils = require('../utils')
-let config = require('../config')
+import request from 'request'
+import * as utils from '../utils'
 
 let cmd = {
   name: 'plan',
@@ -19,7 +17,7 @@ OPTIONS
   command: function(args) {
     utils.initCmd(args)
     utils.validateArgs(args)
-    let swarmstat = config.readConfigFile(args) 
+    let swarmstat = utils.readConfigFile(args) 
     console.log(`Looking for swarm nodes on ${args.interface}...`)
     utils.querySwarmNodes((err, nodes) => {
       if (err) throw err
