@@ -1,7 +1,8 @@
-import fs      from 'fs'
-import yaml    from 'js-yaml'
-import cdi     from 'cccf-docker-instructions'
-import assign  from 'object.assign'
+import fs        from 'fs'
+import yaml      from 'js-yaml'
+import scheduler from '@zombiec0rn/zombie-scheduler' 
+import cdi       from 'cccf-docker-instructions'
+import assign    from 'object.assign'
 
 let engines = {
   docker: {
@@ -14,10 +15,21 @@ let engines = {
   }
 }
 
-export function createPlan(swarm, nodes) {
+function getCurrent(nodes) {
+  return []
+}
+
+export function formatPlan(plan) {
+  // depending on driver
+  return plan
+}
+
+export default function makePlan(nodes, swarm) {
   let current = getCurrent(nodes)
-  let wanted  = getWanted(swarm)
-  let hosts   = getHosts(nodes)
-  let plan    = scheduler.spread(hosts, wanted, current) 
-  return formatPlan(plan) 
+  let wanted  = swarm.services 
+  // Do tag placement
+  // * Assert all tags exists - throw if not
+  // * Add tagged to 
+
+  return scheduler.spread(nodes, wanted, current) 
 }

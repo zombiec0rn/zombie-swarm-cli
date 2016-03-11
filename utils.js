@@ -4,6 +4,7 @@ import async   from 'async'
 import yaml    from 'js-yaml'
 import assign  from 'object.assign'
 import zsf     from '@zombiec0rn/zombie-service-format'
+import znf     from '@zombiec0rn/zombie-node-format'
 import * as route from './route'
 import * as mdns from './mdns'
 
@@ -46,16 +47,16 @@ export function validateArgs(args) {
   }
 }
 
-export function readConfigFileRaw(args) {
+export function readSwarmConfigRaw(path) {
   try {
-    return yaml.safeLoad(fs.readFileSync(args.file))
+    return yaml.safeLoad(fs.readFileSync(path))
   } catch(e) {
     throw e
     process.exit(1)
   }
 }
 
-export function formatConfigFile(config) {
+export function formatSwarmConfig(config) {
   let defaultServiceConfig = config.services.default || {}
   config.services = Object.keys(config.services)
     .filter(k => k != 'default')
@@ -67,14 +68,28 @@ export function formatConfigFile(config) {
   return config
 }
 
-export function readConfigFile(args) {
-  let raw = readConfigFileRaw(args)
-  let formatted = formatConfigFile(raw)
+export function readSwarmConfig(path) {
+  let raw = readSwarmConfigRaw(path)
+  let formatted = formatSwarmConfig(raw)
   return formatted
 }
 
 export function validateServices(services) {
+  services.forEach(s => {
+    // TODO: Move to scheduler.validateServices !?
+    // scheduler needs to export validateServices & validateNodes ??
+    if (!s.memory) throw new Error(`Missing memory - ${s.id}`)
+    if (!s.cpu || typeof s.cpu != 'number') throw new Error(`Missing cpu - ${s.id}`)
+  })
   return zsf.validate(services)
+}
+
+export function readNodesConfig(path) {
+  return JSON.parse(fs.readFileSync(path))
+}
+
+export function validateNodes(nodes) {
+  return znf.validate(nodes)
 }
 
 export function querySwarmNodes(callback, args, queryTime) {

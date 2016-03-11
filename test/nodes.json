@@ -1,0 +1,107 @@
+[
+  {
+    "tags": [
+      "google",
+      "europe",
+      "gateway"
+    ],
+    "engines": [
+      "docker:4243"
+    ],
+    "swarm": "asbjornenge",
+    "hostname": "asbjornenge-gw",
+    "memory": 1779699712,
+    "cpus": [
+      {
+        "model": "Intel(R) Xeon(R) CPU @ 2.60GHz",
+        "speed": 2600,
+        "times": {
+          "user": 8308200,
+          "nice": 1586100,
+          "sys": 3252300,
+          "idle": 13006562000,
+          "irq": 100
+        }
+      }
+    ],
+    "ip": "10.144.44.183"
+  },
+  {
+    "tags": [
+      "google",
+      "europe"
+    ],
+    "engines": [
+      "docker:4243"
+    ],
+    "swarm": "asbjornenge",
+    "hostname": "asbjornenge-node-1",
+    "memory": 1779699712,
+    "cpus": [
+      {
+        "model": "Intel(R) Xeon(R) CPU @ 2.60GHz",
+        "speed": 2599,
+        "times": {
+          "user": 7030200,
+          "nice": 2322100,
+          "sys": 4183300,
+          "idle": 12902866100,
+          "irq": 0
+        }
+      }
+    ],
+    "ip": "10.144.225.1"
+  },
+  {
+    "tags": [
+      "google",
+      "europe"
+    ],
+    "engines": [
+      "docker:4243"
+    ],
+    "swarm": "asbjornenge",
+    "hostname": "asbjornenge-node-2",
+    "memory": 1779699712,
+    "cpus": [
+      {
+        "model": "Intel(R) Xeon(R) CPU @ 2.60GHz",
+        "speed": 2599,
+        "times": {
+          "user": 7030200,
+          "nice": 2322100,
+          "sys": 4183300,
+          "idle": 12902866100,
+          "irq": 0
+        }
+      }
+    ],
+    "ip": "10.144.225.2"
+  },
+  {
+    "tags": [
+      "google",
+      "europe"
+    ],
+    "engines": [
+      "docker:4243"
+    ],
+    "swarm": "asbjornenge",
+    "hostname": "asbjornenge-node-3",
+    "memory": 1779699712,
+    "cpus": [
+      {
+        "model": "Intel(R) Xeon(R) CPU @ 2.60GHz",
+        "speed": 2599,
+        "times": {
+          "user": 7030200,
+          "nice": 2322100,
+          "sys": 4183300,
+          "idle": 12902866100,
+          "irq": 0
+        }
+      }
+    ],
+    "ip": "10.144.225.3"
+  }
+]

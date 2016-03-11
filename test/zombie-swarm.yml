@@ -11,6 +11,8 @@ services:
     image: asbjornenge/gateway:1.0.0
     ports:
       - "80:80"
+    memory: '1000MB'
+    cpu: 1000
     driver: docker
   external-dns:
     placement:
@@ -18,6 +20,8 @@ services:
     image: asbjornenge/external-dns:1.0.0
     ports:
       - "53:53"
+    memory: '200MB'
+    cpu: 200
     driver: docker
   dns:
     placement:
@@ -25,20 +29,30 @@ services:
     image: asbjornenge/dns:1.0.0
     ports:
       - "53:53"
+    memory: '500MB'
+    cpu: 500
     driver: docker
   registry:
     placement:
         - registry-disk
     image: docker/registry:2.3
+    memory: '1GB'
+    cpu: 1000
     driver: docker
-
+    
   # ReadLink
   readlink-app:
     image: asbjornenge/readlink-app:1.0.0  
+    memory: '500MB'
+    cpu: 500
   readlink-api:
     image: asbjornenge/readlink-api:1.0.0  
+    memory: '500MB'
+    cpu: 500
 
   # ClubHut
   clubhut-app:
     image: asbjornenge/clubhut-app:1.0.0 
+    memory: '500MB'
+    cpu: 500
 

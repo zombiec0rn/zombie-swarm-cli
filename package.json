@@ -17,6 +17,7 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "@zombiec0rn/zombie-node-format": "^1.0.1",
+    "@zombiec0rn/zombie-scheduler": "^1.0.2",
     "@zombiec0rn/zombie-service-diff": "^1.0.1",
     "@zombiec0rn/zombie-service-format": "^1.0.2",
     "async": "^1.5.2",
