@@ -19,6 +19,7 @@ OPTIONS
     utils.initCmd(args)
     utils.validateArgs(args)
     let swarm = utils.readSwarmConfig(args.file) 
+    utils.validateServices(swarm.services)
     utils.querySwarmNodes((err, nodes) => {
       if (err) throw err
       let plan = makePlan(nodes, swarm.services)
