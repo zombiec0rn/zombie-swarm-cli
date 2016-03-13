@@ -5,24 +5,26 @@ import cdi       from 'cccf-docker-instructions'
 import assign    from 'object.assign'
 import uniq      from 'lodash.uniq'
 
-let engines = {
-  docker: {
-    createServicePlan: function(serviceName, service, _default) {
-      _default = _default || {}
-      let _service = {}
-      assign(_service, service, { id: serviceName }, _default)
-      return cdi.run(_service) 
-    }
-  }
-}
-
 function getCurrent(nodes) {
   return []
 }
 
+function removeOutputFields(service) {
+  delete service.placement
+  delete service.driver
+  service.host = `tcp://${service.host.ip}:4243`
+  service.memory = service.memory+'b'
+  service['cpu-shares'] = service.cpu
+  delete service.cpu
+  console.log(service.dns)
+  return service
+}
+
 export function formatPlan(plan) {
   // depending on driver
-  return plan
+  let add_cmds = cdi.run(plan.add.map(removeOutputFields))
+  let rm_cmds = cdi.rm(plan.remove.map(removeOutputFields))
+  return rm_cmds.concat(add_cmds) 
 }
 
 export default function makePlan(nodes, wanted) {
@@ -70,7 +72,5 @@ export default function makePlan(nodes, wanted) {
     return !istagadd
   })
 
-  plan.add = plan.add.map(cdi.run)
-
-  return plan 
+  return formatPlan(plan) 
 }
