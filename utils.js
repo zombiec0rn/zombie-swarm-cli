@@ -106,10 +106,18 @@ export function querySwarmNodes(callback, args, queryTime) {
         info.ip = a.data
         cb(err, info)
       })
-    }, (err, res) => {
+    }, (err, nodes) => {
       _mdns.destroy()
       spinner.stop()
-      callback(err, res)
+      if (err) {
+        console.error(err)
+        process.exit(1)
+      }
+      if (nodes.length == 0) {
+        console.log(`No swarm nodes found on ${args.interface} ¯\_(ツ)_/¯`)
+        process.exit(0)
+      }
+      callback(nodes)
     })
   }, queryTime)
   mdns.query(_mdns)

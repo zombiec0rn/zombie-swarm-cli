@@ -70,5 +70,7 @@ export default function makePlan(nodes, wanted) {
     return !istagadd
   })
 
+  plan.add = plan.add.map(cdi.run)
+
   return plan 
 }

@@ -15,21 +15,26 @@ List swarm nodes.
 
 OPTIONS
 `,
-  options: utils.defaultOptions.concat([{
-    name: 'out-file',
-    help: 'File to dump the discovered swarm nodes (.json - can be used as plan input)'
-  }]),
+  options: utils.defaultOptions.concat([
+    {
+      name: 'out-file',
+      help: 'File to dump the discovered swarm nodes (.json - can be used as plan input)'
+    },
+    {
+      name: 'query',
+      default: 1000,
+      help: 'How long to query (ms)'
+    }
+  ]),
   command: function(args) {
     utils.initCmd(args)
     utils.validateArgs(args)
-    utils.querySwarmNodes((err, nodes) => {
-      if (err) return console.error(err)
-      if (nodes.length == 0) return console.log(`No swarm nodes found on ${args.interface} ¯\_(ツ)_/¯`) 
+    utils.querySwarmNodes((nodes) => {
       if (args['out-file']) fs.writeFileSync(args['out-file'], JSON.stringify(nodes, null, 2))
       let table = makeTable(nodes, args)
       console.log(table.toString())
       process.exit()
-    }, args, 5000) 
+    }, args, args.query) 
   }
 }
 
