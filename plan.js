@@ -16,7 +16,6 @@ function removeOutputFields(service) {
   service.memory = service.memory+'b'
   service['cpu-shares'] = service.cpu
   delete service.cpu
-  console.log(service.dns)
   return service
 }
 
@@ -24,7 +23,7 @@ export function formatPlan(plan) {
   // depending on driver
   let add_cmds = cdi.run(plan.add.map(removeOutputFields))
   let rm_cmds = cdi.rm(plan.remove.map(removeOutputFields))
-  return rm_cmds.concat(add_cmds) 
+  return rm_cmds.concat(add_cmds).join('\n') 
 }
 
 export default function makePlan(nodes, wanted) {
