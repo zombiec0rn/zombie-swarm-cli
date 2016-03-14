@@ -19,6 +19,7 @@ function removeOutputFields(service) {
   return service
 }
 
+// TODO: Move to apply.js ?
 export function formatPlan(plan) {
   // depending on driver
   let add_cmds = cdi.run(plan.add.map(removeOutputFields))
@@ -71,5 +72,5 @@ export default function makePlan(nodes, wanted) {
     return !istagadd
   })
 
-  return formatPlan(plan) 
+  return plan 
 }

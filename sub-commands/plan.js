@@ -18,13 +18,18 @@ OPTIONS
       help: 'Path to zombie-swarm file (default ./zombie-swarm.yml)'
     },
     {
-      name: 'nodes',
-      help: 'Path to nodes.json file'
-    },
-    {
       name: 'query',
       default: 1000,
-      help: 'How long to query (ms)'
+      help: 'How long to query (ms - default 1000)'
+    },
+    {
+      name: 'out-file',
+      default: './zombie-swarm.zplan',
+      help: 'File to save plan (default ./zombie-swarm.zplan)'
+    },
+    {
+      name: 'nodes',
+      help: 'Path to nodes.json file'
     }
   ]),
   command: function(args) {
@@ -37,7 +42,10 @@ OPTIONS
     }
     nodeQuery((nodes) => {
       let plan = makePlan(nodes, swarm.services)
-      console.log(plan)
+      fs.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2))
+      console.log(`Adding ${plan.add.length}, keeping ${plan.keep.length} and removing ${plan.remove.length}.
+Plan written to ${args['out-file']}.
+`)
       process.exit()
     }, args, args.query) 
   }
