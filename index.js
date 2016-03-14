@@ -20,7 +20,8 @@ OPTIONS
     },
     commands : [
       require('./sub-commands/ls').default,
-      require('./sub-commands/plan').default
+      require('./sub-commands/plan').default, 
+      require('./sub-commands/apply').default
     ]
 },{
     autoHelp : true
