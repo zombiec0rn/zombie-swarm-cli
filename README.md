@@ -30,6 +30,11 @@ apply - apply a plan
 
 ## Changelog
 
+### 2.1.0
+
+* Added support for plan
+* Added basic support for apply (echoing cmds)
+
 ### 2.0.0
 
 * Initial release :tada:
