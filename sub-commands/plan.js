@@ -44,6 +44,7 @@ OPTIONS
       let plan = makePlan(nodes, swarm.services)
       fs.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2))
       // TODO: provide a detailed diff table
+      // TODO: Support --dry <- Only displays the diff table but does not write the file
       console.log(`Adding ${plan.add.length}, keeping ${plan.keep.length} and removing ${plan.remove.length}.
 Plan written to ${args['out-file']}.
 `)
