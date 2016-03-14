@@ -21,13 +21,13 @@ var _object3 = require('object.values');
 
 var _object4 = _interopRequireDefault(_object3);
 
+var _chalk = require('chalk');
+
+var _chalk2 = _interopRequireDefault(_chalk);
+
 var _request = require('request');
 
 var _request2 = _interopRequireDefault(_request);
-
-var _ora = require('ora');
-
-var _ora2 = _interopRequireDefault(_ora);
 
 var _utils = require('../utils');
 
@@ -37,26 +37,28 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+require('colors');
+
 var cmd = {
   name: 'ls',
   usage: 'Usage: zombie-swarm ls [OPTIONS]\n\nList swarm nodes.\n\nOPTIONS\n',
   options: utils.defaultOptions.concat([{
     name: 'out-file',
     help: 'File to dump the discovered swarm nodes (.json - can be used as plan input)'
+  }, {
+    name: 'query',
+    default: 1000,
+    help: 'How long to query (ms)'
   }]),
   command: function command(args) {
     utils.initCmd(args);
     utils.validateArgs(args);
-    var spinner = new _ora2.default({ text: 'Looking for swarm nodes on ' + args.interface + '...' });
-    spinner.start();
-    utils.querySwarmNodes(function (err, nodes) {
-      spinner.stop();
-      if (err) return console.error(err);
-      if (nodes.length == 0) return console.log('No swarm nodes found on ' + args.interface + ' ¯_(ツ)_/¯');
+    utils.querySwarmNodes(function (nodes) {
       if (args['out-file']) _fs2.default.writeFileSync(args['out-file'], JSON.stringify(nodes, null, 2));
-      console.log(makeTable(nodes, args).toString());
+      var table = makeTable(nodes, args);
+      console.log(table.toString());
       process.exit();
-    }, args, 5000);
+    }, args, args.query);
   }
 };
 

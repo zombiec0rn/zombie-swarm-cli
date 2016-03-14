@@ -3,14 +3,60 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.defaultOptions = undefined;
 exports.initCmd = initCmd;
 exports.validateArgs = validateArgs;
-exports.readConfigFile = readConfigFile;
+exports.readSwarmConfigRaw = readSwarmConfigRaw;
+exports.formatSwarmConfig = formatSwarmConfig;
+exports.readSwarmConfig = readSwarmConfig;
+exports.validateServices = validateServices;
+exports.readNodesConfig = readNodesConfig;
+exports.validateNodes = validateNodes;
 exports.querySwarmNodes = querySwarmNodes;
-var request = require('request');
-var route = require('./route');
-var async = require('async');
-var _mdns = require('./mdns');
+
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
+
+var _request = require('request');
+
+var _request2 = _interopRequireDefault(_request);
+
+var _async = require('async');
+
+var _async2 = _interopRequireDefault(_async);
+
+var _jsYaml = require('js-yaml');
+
+var _jsYaml2 = _interopRequireDefault(_jsYaml);
+
+var _object = require('object.assign');
+
+var _object2 = _interopRequireDefault(_object);
+
+var _zombieServiceFormat = require('@zombiec0rn/zombie-service-format');
+
+var _zombieServiceFormat2 = _interopRequireDefault(_zombieServiceFormat);
+
+var _zombieNodeFormat = require('@zombiec0rn/zombie-node-format');
+
+var _zombieNodeFormat2 = _interopRequireDefault(_zombieNodeFormat);
+
+var _ora = require('ora');
+
+var _ora2 = _interopRequireDefault(_ora);
+
+var _route = require('./route');
+
+var route = _interopRequireWildcard(_route);
+
+var _mdns2 = require('./mdns');
+
+var mdns = _interopRequireWildcard(_mdns2);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // NOTE:
 // `initCmd` needs to be called whenever mdns is involved.
@@ -48,30 +94,77 @@ function validateArgs(args) {
   }
 }
 
-function readConfigFile(args) {
+function readSwarmConfigRaw(path) {
   try {
-    return yaml.safeLoad(fs.readFileSync(args.file));
+    return _jsYaml2.default.safeLoad(_fs2.default.readFileSync(path));
   } catch (e) {
     throw e;
     process.exit(1);
   }
 }
 
+function formatSwarmConfig(config) {
+  var defaultServiceConfig = config.services.default || {};
+  config.services = Object.keys(config.services).filter(function (k) {
+    return k != 'default';
+  }).map(function (k) {
+    var serviceConfig = config.services[k];
+    serviceConfig.id = k;
+    return (0, _object2.default)({}, config.services[k], defaultServiceConfig);
+  });
+  return config;
+}
+
+function readSwarmConfig(path) {
+  var raw = readSwarmConfigRaw(path);
+  var formatted = formatSwarmConfig(raw);
+  return formatted;
+}
+
+function validateServices(services) {
+  services.forEach(function (s) {
+    // TODO: Move to scheduler.validateServices !?
+    // scheduler needs to export validateServices & validateNodes ??
+    if (!s.memory) throw new Error('Missing memory - ' + s.id);
+    if (!s.cpu || typeof s.cpu != 'number') throw new Error('Missing cpu - ' + s.id);
+  });
+  return _zombieServiceFormat2.default.validate(services);
+}
+
+function readNodesConfig(path) {
+  return JSON.parse(_fs2.default.readFileSync(path));
+}
+
+function validateNodes(nodes) {
+  return _zombieNodeFormat2.default.validate(nodes);
+}
+
 function querySwarmNodes(callback, args, queryTime) {
   queryTime = queryTime || 5000;
-  var mdns = _mdns.default(args);
-  _mdns.onResponse(mdns, function (answers) {
-    async.map(answers, function (a, cb) {
-      request('http://' + a.data + ':8901', function (err, res, body) {
+  var _mdns = mdns.default(args);
+  var spinner = new _ora2.default({ text: 'Looking for swarm nodes on ' + args.interface + '...' });
+  spinner.start();
+  mdns.onResponse(_mdns, function (answers) {
+    _async2.default.map(answers, function (a, cb) {
+      (0, _request2.default)('http://' + a.data + ':8901', function (err, res, body) {
         if (res.statusCode != 200) return cb(err, a);
         var info = JSON.parse(body);
         info.ip = a.data;
         cb(err, info);
       });
-    }, function (err, res) {
-      mdns.destroy();
-      callback(err, res);
+    }, function (err, nodes) {
+      _mdns.destroy();
+      spinner.stop();
+      if (err) {
+        console.error(err);
+        process.exit(1);
+      }
+      if (nodes.length == 0) {
+        console.log('No swarm nodes found on ' + args.interface + ' ¯_(ツ)_/¯');
+        process.exit(0);
+      }
+      callback(nodes);
     });
   }, queryTime);
-  _mdns.query(mdns);
+  mdns.query(_mdns);
 }
