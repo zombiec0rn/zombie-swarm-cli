@@ -1,30 +1,11 @@
 import fs        from 'fs'
 import yaml      from 'js-yaml'
 import scheduler from '@zombiec0rn/zombie-scheduler' 
-import cdi       from 'cccf-docker-instructions'
 import assign    from 'object.assign'
 import uniq      from 'lodash.uniq'
 
 function getCurrent(nodes) {
   return []
-}
-
-function removeOutputFields(service) {
-  delete service.placement
-  delete service.driver
-  service.host = `tcp://${service.host.ip}:4243`
-  service.memory = service.memory+'b'
-  service['cpu-shares'] = service.cpu
-  delete service.cpu
-  return service
-}
-
-// TODO: Move to apply.js ?
-export function formatPlan(plan) {
-  // depending on driver
-  let add_cmds = cdi.run(plan.add.map(removeOutputFields))
-  let rm_cmds = cdi.rm(plan.remove.map(removeOutputFields))
-  return rm_cmds.concat(add_cmds).join('\n') 
 }
 
 export default function makePlan(nodes, wanted) {
