@@ -1,6 +1,8 @@
 import cdi from 'cccf-docker-instructions'
+import clone from 'clone'
 
-function removeOutputFields(service) {
+function removeOutputFields(s) {
+  let service = clone(s)
   delete service.placement
   delete service.driver
   service.host = `tcp://${service.host.ip}:4243`
@@ -20,6 +22,6 @@ export default function applyPlan(plan) {
   // then run rm
   // then run add
 
-  return rm_cmds.concat(add_cmds).join('\n') 
+  return stop_cmds.concat(rm_cmds, add_cmds).join('\n') 
 }
 
