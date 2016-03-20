@@ -28,26 +28,33 @@ OPTIONS
       help: 'File to save plan (default ./zombie-swarm.zplan)'
     },
     {
+      name: 'dry',
+      default: false,
+      help: 'Dry run. Displays the diff table but does not write the file'
+    },
+    {
       name: 'nodes',
       help: 'Path to nodes.json file'
     }
   ]),
   command: function(args) {
-    utils.initCmd(args)
-    utils.validateArgs(args)
-    let swarm = utils.readSwarmConfig(args.swarm) 
-    utils.validateServices(swarm.services)
-    let nodeQuery = !args.nodes ? utils.querySwarmNodes : (callback) => {
-      callback(JSON.parse(fs.readFileSync(args.nodes))) 
+    let nodeQuery;
+    if (args.nodes) {
+      nodeQuery = (callback) => {
+        callback(JSON.parse(fs.readFileSync(args.nodes))) 
+      }
+    } else {
+      utils.initCmd(args)
+      utils.validateArgs(args)
+      nodeQuery = utils.querySwarmNodes
     }
+    let swarm = utils.readSwarmConfig(args.swarm) 
     nodeQuery((nodes) => {
       let plan = makePlan(nodes, swarm.services)
-      fs.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2))
+      if (!args.dry) fs.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2))
       // TODO: provide a detailed diff table
-      // TODO: Support --dry <- Only displays the diff table but does not write the file
-      console.log(`Adding ${plan.add.length}, keeping ${plan.keep.length} and removing ${plan.remove.length}.
-Plan written to ${args['out-file']}.
-`)
+      console.log(`Adding ${plan.add.length}, keeping ${plan.keep.length} and removing ${plan.remove.length}.`)
+      if (!args.dry) console.log(`Plan written to ${args['out-file']}.`)
       process.exit()
     }, args, args.query) 
   }
