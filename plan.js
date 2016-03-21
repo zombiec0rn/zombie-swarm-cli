@@ -23,9 +23,17 @@ function getCurrent(nodes) {
   }, [])
 }
 
-export default function makePlan(nodes, wanted) {
+export default function makePlan(nodes, _wanted) {
+  /* PREPARING */ 
+  // Extracting current services from nodes (with fingerprints)
+  // Adding fingerprints to wanted
   let current = getCurrent(nodes)
+  let wanted  = _wanted.map(s => {
+    s.fingerprint = zdiff.fingerprint(s)
+    return s
+  })
 
+  /* TAGS & PLACEMENTS */
   let tags = uniq(nodes.reduce((t, n) => {
     return t.concat(n.tags || [])
   },[]).concat(wanted.reduce((t,s) => {
@@ -49,6 +57,7 @@ export default function makePlan(nodes, wanted) {
   // to support both "on one of these" and "on all of these"
   // Right now I think we only support "on one of these"
 
+  /* TAG & PLACEMENT SCHEDULING */
   var tagadds = []
   tags.forEach(t => {
     let tagplan = scheduler.spread(tagmap[t].nodes, tagmap[t].wanted)
@@ -58,18 +67,11 @@ export default function makePlan(nodes, wanted) {
     tagadds = tagadds.concat(tagplan.add)
   })
 
+  /* FINAL SCHEDULING */ 
   let currentids = current.map(s => s.id)
   tagadds = tagadds.filter(s => currentids.indexOf(s.id) < 0)
   let wantedids = wanted.map(s => s.id)
   let tagaddids = tagadds.map(s => s.id) 
-  let wantedfingerprints = wanted.map(s => {
-    let unified = scheduler.unify([s])[0]
-    return { id: s.id, fingerprint: zdiff.fingerprint(unified) }
-  })
-
-  //console.log('WANTED', wanted)
-  //console.log('CURRENT', current.concat(tagadds))
-  //console.log('TAGADDIDS', tagaddids)
 
   let plan = scheduler.spread(nodes, wanted, current.concat(tagadds))
   plan.keep = plan.keep.filter(s => {
@@ -78,13 +80,15 @@ export default function makePlan(nodes, wanted) {
     return !istagadd
   })
 
+  /* CLEANUPS */
+  // Add the fingerprint as env variable and remove property
   plan.add.forEach(s => {
     if (!s.env) s.env = []
-    let fingerprint = wantedfingerprints.filter(fp => fp.id == s.id)[0].fingerprint
-    s.env.push(`ZOMBIE_SWARM_FINGERPRINT=${fingerprint}`)
+    s.env.push(`ZOMBIE_SWARM_FINGERPRINT=${s.fingerprint}`)
+    delete s.fingerprint
   })
 
-  //console.log('PLAN', JSON.stringify(plan, null, 2))
+//  console.log('PLAN', JSON.stringify(plan, null, 2))
 
   return plan 
 }
