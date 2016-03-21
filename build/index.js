@@ -22,3 +22,6 @@ require('subcmd')({
 }, {
   autoHelp: true
 })(process.argv.slice(2));
+
+// TODO: Version support
+// TODO: Improve err output if no node with required tag found!

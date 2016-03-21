@@ -41,22 +41,31 @@ var cmd = {
     default: './zombie-swarm.zplan',
     help: 'File to save plan (default ./zombie-swarm.zplan)'
   }, {
+    name: 'dry',
+    default: false,
+    help: 'Dry run. Displays the diff table but does not write the file'
+  }, {
     name: 'nodes',
     help: 'Path to nodes.json file'
   }]),
   command: function command(args) {
-    utils.initCmd(args);
-    utils.validateArgs(args);
+    var nodeQuery = undefined;
+    if (args.nodes) {
+      nodeQuery = function nodeQuery(callback) {
+        callback(JSON.parse(_fs2.default.readFileSync(args.nodes)));
+      };
+    } else {
+      utils.initCmd(args);
+      utils.validateArgs(args);
+      nodeQuery = utils.querySwarmNodes;
+    }
     var swarm = utils.readSwarmConfig(args.swarm);
-    utils.validateServices(swarm.services);
-    var nodeQuery = !args.nodes ? utils.querySwarmNodes : function (callback) {
-      callback(JSON.parse(_fs2.default.readFileSync(args.nodes)));
-    };
     nodeQuery(function (nodes) {
       var plan = (0, _plan2.default)(nodes, swarm.services);
-      _fs2.default.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2));
+      if (!args.dry) _fs2.default.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2));
       // TODO: provide a detailed diff table
-      console.log('Adding ' + plan.add.length + ', keeping ' + plan.keep.length + ' and removing ' + plan.remove.length + '.\nPlan written to ' + args['out-file'] + '.\n');
+      console.log('Adding ' + plan.add.length + ', keeping ' + plan.keep.length + ' and removing ' + plan.remove.length + '.');
+      if (!args.dry) console.log('Plan written to ' + args['out-file'] + '.');
       process.exit();
     }, args, args.query);
   }

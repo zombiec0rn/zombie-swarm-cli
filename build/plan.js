@@ -17,6 +17,10 @@ var _zombieScheduler = require('@zombiec0rn/zombie-scheduler');
 
 var _zombieScheduler2 = _interopRequireDefault(_zombieScheduler);
 
+var _zombieServiceDiff = require('@zombiec0rn/zombie-service-diff');
+
+var _zombieServiceDiff2 = _interopRequireDefault(_zombieServiceDiff);
+
 var _object = require('object.assign');
 
 var _object2 = _interopRequireDefault(_object);
@@ -28,12 +32,34 @@ var _lodash2 = _interopRequireDefault(_lodash);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function getCurrent(nodes) {
-  return [];
+  return nodes.reduce(function (services, node) {
+    var nodeServices = node.services.map(function (s) {
+      s.host = node;
+      if (s.env) {
+        s.env.forEach(function (e) {
+          if (e.indexOf('ZOMBIE_SWARM_FINGERPRINT') == 0) {
+            s.fingerprint = e.split('=')[1];
+          }
+        });
+      }
+      return s;
+    });
+    delete node.services;
+    return services.concat(nodeServices);
+  }, []);
 }
 
-function makePlan(nodes, wanted) {
+function makePlan(nodes, _wanted) {
+  /* PREPARING */
+  // Extracting current services from nodes (with fingerprints)
+  // Adding fingerprints to wanted
   var current = getCurrent(nodes);
+  var wanted = _wanted.map(function (s) {
+    s.fingerprint = _zombieServiceDiff2.default.fingerprint(s);
+    return s;
+  });
 
+  /* TAGS & PLACEMENTS */
   var tags = (0, _lodash2.default)(nodes.reduce(function (t, n) {
     return t.concat(n.tags || []);
   }, []).concat(wanted.reduce(function (t, s) {
@@ -61,6 +87,7 @@ function makePlan(nodes, wanted) {
   // to support both "on one of these" and "on all of these"
   // Right now I think we only support "on one of these"
 
+  /* TAG & PLACEMENT SCHEDULING */
   var tagadds = [];
   tags.forEach(function (t) {
     var tagplan = _zombieScheduler2.default.spread(tagmap[t].nodes, tagmap[t].wanted);
@@ -70,6 +97,13 @@ function makePlan(nodes, wanted) {
     tagadds = tagadds.concat(tagplan.add);
   });
 
+  /* FINAL SCHEDULING */
+  var currentids = current.map(function (s) {
+    return s.id;
+  });
+  tagadds = tagadds.filter(function (s) {
+    return currentids.indexOf(s.id) < 0;
+  });
   var wantedids = wanted.map(function (s) {
     return s.id;
   });
@@ -83,6 +117,16 @@ function makePlan(nodes, wanted) {
     if (istagadd) plan.add.push(s); // unshift ? make room for tagged services first ??
     return !istagadd;
   });
+
+  /* CLEANUPS */
+  // Add the fingerprint as env variable and remove property
+  plan.add.forEach(function (s) {
+    if (!s.env) s.env = [];
+    s.env.push('ZOMBIE_SWARM_FINGERPRINT=' + s.fingerprint);
+    delete s.fingerprint;
+  });
+
+  //  console.log('PLAN', JSON.stringify(plan, null, 2))
 
   return plan;
 }

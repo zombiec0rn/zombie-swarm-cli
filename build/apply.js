@@ -9,9 +9,14 @@ var _cccfDockerInstructions = require('cccf-docker-instructions');
 
 var _cccfDockerInstructions2 = _interopRequireDefault(_cccfDockerInstructions);
 
+var _clone = require('clone');
+
+var _clone2 = _interopRequireDefault(_clone);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function removeOutputFields(service) {
+function removeOutputFields(s) {
+  var service = (0, _clone2.default)(s);
   delete service.placement;
   delete service.driver;
   service.host = 'tcp://' + service.host.ip + ':4243';
@@ -31,5 +36,5 @@ function applyPlan(plan) {
   // then run rm
   // then run add
 
-  return rm_cmds.concat(add_cmds).join('\n');
+  return stop_cmds.concat(rm_cmds, add_cmds).join('\n');
 }

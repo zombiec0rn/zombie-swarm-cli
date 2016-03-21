@@ -57,6 +57,7 @@ var cmd = {
       if (args['out-file']) _fs2.default.writeFileSync(args['out-file'], JSON.stringify(nodes, null, 2));
       var table = makeTable(nodes, args);
       console.log(table.toString());
+      // TODO: Make a node 'Write file ...' if args['out-file']
       process.exit();
     }, args, args.query);
   }
