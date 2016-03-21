@@ -30,6 +30,10 @@ apply - apply a plan
 
 ## Changelog
 
+### 2.2.0
+
+* Improved plan diffing 
+
 ### 2.1.0
 
 * Added support for plan
