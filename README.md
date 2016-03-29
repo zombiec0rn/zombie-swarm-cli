@@ -50,6 +50,10 @@ interface - the interface to query (mdns)
 
 ## Changelog
 
+### 2.5.1
+
+* Fixed issue with modification to current container would not obey tags
+
 ### 2.5.0
 
 * New feature - support for `.zombierc` config file (yml)
