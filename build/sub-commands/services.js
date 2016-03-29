@@ -40,12 +40,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 require('colors');
 
 var cmd = {
-  name: 'ls',
-  usage: 'Usage: zombie-swarm ls [OPTIONS]\n\nList swarm nodes.\n\nOPTIONS\n',
+  name: 'services',
+  usage: 'Usage: zombie-swarm services [OPTIONS]\n\nList swarm services.\n\nOPTIONS\n',
   options: utils.defaultOptions.concat([{
-    name: 'out-file',
-    help: 'File to dump the discovered swarm nodes (.json - can be used as plan input)'
-  }, {
     name: 'query',
     default: 1000,
     help: 'How long to query (ms)'
@@ -54,25 +51,22 @@ var cmd = {
     utils.initCmd(args);
     utils.validateArgs(args);
     utils.querySwarmNodes(function (nodes) {
-      if (args['out-file']) _fs2.default.writeFileSync(args['out-file'], JSON.stringify(nodes, null, 2));
-      var table = makeTable(nodes, args);
+      var services = nodes.map(utils.extractServices);
+      services = [].concat.apply([], services); // flatten
+      var table = makeTable(services, args);
       console.log(table.toString());
-      if (args['out-file']) console.log('# Wrote config to file: ' + args['out-file']);
       process.exit();
     }, args, args.query);
   }
 };
 
-function makeTable(nodes, args) {
-  var formatted = nodes.map(function (node) {
+function makeTable(services, args) {
+  var formatted = services.map(function (service) {
     return {
-      node: node.hostname,
-      swarm: node.swarm,
-      tags: node.tags.join(','),
-      ip: node.ip,
-      engines: node.engines.join(','),
-      memory: node.memory,
-      cpus: node.cpus.length + ' x ' + node.cpus[0].speed
+      id: service.id,
+      image: service.image,
+      node: service.host.hostname,
+      fingerprint: service.fingerprint
     };
   });
 

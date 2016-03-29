@@ -14,6 +14,7 @@ exports.readNodesConfig = readNodesConfig;
 exports.validateNodes = validateNodes;
 exports.querySwarmNodes = querySwarmNodes;
 exports.detectDuplicateFingerprints = detectDuplicateFingerprints;
+exports.extractServices = extractServices;
 
 var _fs = require('fs');
 
@@ -178,5 +179,19 @@ function detectDuplicateFingerprints(services) {
   }).filter(function (fp, i, arr) {
     var arrIndex = arr.indexOf(fp);
     return arrIndex >= 0 && arrIndex != i;
+  });
+}
+
+function extractServices(node) {
+  return (node.services || []).map(function (s) {
+    s.host = node;
+    if (s.env) {
+      s.env.forEach(function (e) {
+        if (e.indexOf('ZOMBIE_SWARM_FINGERPRINT') == 0) {
+          s.fingerprint = e.split('=')[1];
+        }
+      });
+    }
+    return s;
   });
 }

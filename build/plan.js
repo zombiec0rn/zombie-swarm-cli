@@ -47,18 +47,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function getCurrent(nodes) {
   var services = nodes.reduce(function (services, node) {
-    if (!node.services) node.services = [];
-    var nodeServices = node.services.map(function (s) {
-      s.host = node;
-      if (s.env) {
-        s.env.forEach(function (e) {
-          if (e.indexOf('ZOMBIE_SWARM_FINGERPRINT') == 0) {
-            s.fingerprint = e.split('=')[1];
-          }
-        });
-      }
-      return s;
-    });
+    var nodeServices = utils.extractServices(node);
     delete node.services;
     return services.concat(nodeServices);
   }, []);

@@ -19,7 +19,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 require('subcmd')({
   name: 'zombie-swarm',
-  usage: 'Usage: zombie-swarm [COMMAND] [OPTIONS]\n\nCOMMAND(s)\n\n  ls - list swarm nodes\n  plan - create a plan\n  apply - apply a plan\n\nOPTIONS\n',
+  usage: 'Usage: zombie-swarm [COMMAND] [OPTIONS]\n\nCOMMAND(s)\n\n  ls - list swarm nodes\n  plan - create a plan\n  apply - apply a plan\n  services - list swarm services\n\nOPTIONS\n',
   options: utils.defaultOptions.concat([{
     name: 'version',
     abbr: 'v',
@@ -29,10 +29,9 @@ require('subcmd')({
     if (args.v) return console.log(_package2.default.version);
     console.log(cliclopts.usage());
   },
-  commands: [require('./sub-commands/ls').default, require('./sub-commands/plan').default, require('./sub-commands/apply').default]
+  commands: [require('./sub-commands/ls').default, require('./sub-commands/plan').default, require('./sub-commands/apply').default, require('./sub-commands/services').default]
 }, {
   autoHelp: true
 })(process.argv.slice(2));
 
-// TODO: Version support
 // TODO: Improve err output if no node with required tag found!
