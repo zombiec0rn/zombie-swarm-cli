@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as route from './route'
 import * as utils from './utils'
+import pkg        from './package.json'
 
 require('subcmd')({
     name : 'zombie-swarm',
@@ -14,8 +15,15 @@ COMMAND(s)
 
 OPTIONS
 `,
-    options : [].concat(utils.defaultOptions),
+    options : utils.defaultOptions.concat([
+      {
+        name: 'version',
+        abbr: 'v',
+        help: 'Prints version'
+      }
+    ]),
     command : function(args, cliclopts) {
+      if (args.v) return console.log(pkg.version)
       console.log(cliclopts.usage())
     },
     commands : [
