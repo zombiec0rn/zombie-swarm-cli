@@ -1,12 +1,14 @@
-import fs        from 'fs'
-import yaml      from 'js-yaml'
-import scheduler from '@zombiec0rn/zombie-scheduler' 
-import zdiff     from '@zombiec0rn/zombie-service-diff'
-import assign    from 'object.assign'
-import uniq      from 'lodash.uniq'
+import fs           from 'fs'
+import yaml         from 'js-yaml'
+import scheduler    from '@zombiec0rn/zombie-scheduler' 
+import zdiff        from '@zombiec0rn/zombie-service-diff'
+import assign       from 'object.assign'
+import uniq         from 'lodash.uniq'
+import find         from 'lodash.find'
+import randomString from 'random-string'
 
 function getCurrent(nodes) {
-  return nodes.reduce((services, node) => {
+  let services = nodes.reduce((services, node) => {
     let nodeServices = node.services.map(s => {
       s.host = node
       if (s.env) {
@@ -21,6 +23,23 @@ function getCurrent(nodes) {
     delete node.services
     return services.concat(nodeServices)
   }, [])
+
+  // Detect duplicate fingerprints
+  let duplicates = services
+    .filter(s => s.fingerprint)
+    .map(s => s.fingerprint)
+    .filter((fp, i, arr) => {
+      return arr.includes(fp, i + 1)
+    })
+
+  // Randomize duplicate fingerprint (make sure they are re-evaluated)
+  services.forEach(s => {
+    if (duplicates.includes(s.fingerprint)) {
+      s.fingerprint = randomString()
+    }
+  })
+
+  return services
 }
 
 export default function makePlan(nodes, _wanted) {
@@ -68,12 +87,24 @@ export default function makePlan(nodes, _wanted) {
   })
 
   /* FINAL SCHEDULING */ 
-  let currentids = current.map(s => s.id)
-  tagadds = tagadds.filter(s => currentids.indexOf(s.id) < 0)
-  let wantedids = wanted.map(s => s.id)
-  let tagaddids = tagadds.map(s => s.id) 
+
+  // We trust tagadds over current (we might have changed tags)
+  // If a tagadd is in current we randomize the fingerprint to ensure re-eval 
+  current.forEach(s => {
+    let tagadd = find(tagadds, { id: s.id })
+    if (!tagadd) return
+    if (tagadd.host.hostname != s.host.hostname) {
+      s.fingerprint = randomString()
+      //console.log('tagadd moved, garbling fingerprint')
+    }
+    else {
+      tagadds = tagadds.filter(ta => ta.id != s.id)
+      //console.log('tagadd same, removing from tagadds')
+    }
+  })
 
   let plan = scheduler.spread(nodes, wanted, current.concat(tagadds))
+  let tagaddids = tagadds.map(s => s.id) 
   plan.keep = plan.keep.filter(s => {
     let istagadd = tagaddids.indexOf(s.id) >= 0
     if (istagadd) plan.add.push(s) // unshift ? make room for tagged services first ??
@@ -87,8 +118,7 @@ export default function makePlan(nodes, _wanted) {
     s.env.push(`ZOMBIE_SWARM_FINGERPRINT=${s.fingerprint}`)
     delete s.fingerprint
   })
-
-//  console.log('PLAN', JSON.stringify(plan, null, 2))
+  //console.log('PLAN', JSON.stringify(plan, null, 2))
 
   return plan 
 }
