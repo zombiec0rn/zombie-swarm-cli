@@ -29,10 +29,18 @@ var _lodash = require('lodash.uniq');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _lodash3 = require('lodash.find');
+
+var _lodash4 = _interopRequireDefault(_lodash3);
+
+var _randomString = require('random-string');
+
+var _randomString2 = _interopRequireDefault(_randomString);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function getCurrent(nodes) {
-  return nodes.reduce(function (services, node) {
+  var services = nodes.reduce(function (services, node) {
     var nodeServices = node.services.map(function (s) {
       s.host = node;
       if (s.env) {
@@ -47,6 +55,24 @@ function getCurrent(nodes) {
     delete node.services;
     return services.concat(nodeServices);
   }, []);
+
+  // Detect duplicate fingerprints
+  var duplicates = services.filter(function (s) {
+    return s.fingerprint;
+  }).map(function (s) {
+    return s.fingerprint;
+  }).filter(function (fp, i, arr) {
+    return arr.includes(fp, i + 1);
+  });
+
+  // Randomize duplicate fingerprint (make sure they are re-evaluated)
+  services.forEach(function (s) {
+    if (duplicates.includes(s.fingerprint)) {
+      s.fingerprint = (0, _randomString2.default)();
+    }
+  });
+
+  return services;
 }
 
 function makePlan(nodes, _wanted) {
@@ -98,20 +124,27 @@ function makePlan(nodes, _wanted) {
   });
 
   /* FINAL SCHEDULING */
-  var currentids = current.map(function (s) {
-    return s.id;
-  });
-  tagadds = tagadds.filter(function (s) {
-    return currentids.indexOf(s.id) < 0;
-  });
-  var wantedids = wanted.map(function (s) {
-    return s.id;
-  });
-  var tagaddids = tagadds.map(function (s) {
-    return s.id;
+
+  // We trust tagadds over current (we might have changed tags)
+  // If a tagadd is in current we randomize the fingerprint to ensure re-eval
+  current.forEach(function (s) {
+    var tagadd = (0, _lodash4.default)(tagadds, { id: s.id });
+    if (!tagadd) return;
+    if (tagadd.host.hostname != s.host.hostname) {
+      s.fingerprint = (0, _randomString2.default)();
+      //console.log('tagadd moved, garbling fingerprint')
+    } else {
+        tagadds = tagadds.filter(function (ta) {
+          return ta.id != s.id;
+        });
+        //console.log('tagadd same, removing from tagadds')
+      }
   });
 
   var plan = _zombieScheduler2.default.spread(nodes, wanted, current.concat(tagadds));
+  var tagaddids = tagadds.map(function (s) {
+    return s.id;
+  });
   plan.keep = plan.keep.filter(function (s) {
     var istagadd = tagaddids.indexOf(s.id) >= 0;
     if (istagadd) plan.add.push(s); // unshift ? make room for tagged services first ??
@@ -125,8 +158,7 @@ function makePlan(nodes, _wanted) {
     s.env.push('ZOMBIE_SWARM_FINGERPRINT=' + s.fingerprint);
     delete s.fingerprint;
   });
-
-  //  console.log('PLAN', JSON.stringify(plan, null, 2))
+  //console.log('PLAN', JSON.stringify(plan, null, 2))
 
   return plan;
 }

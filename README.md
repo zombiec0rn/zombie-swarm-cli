@@ -30,6 +30,11 @@ apply - apply a plan
 
 ## Changelog
 
+### 2.2.1
+
+* Fixed plan bug where multiple id's would cause issues (modifying existing service configs)
+* Fixed plan bug where current placement would be trusted even if tags have changed
+
 ### 2.2.0
 
 * Improved plan diffing 
