@@ -49,6 +49,7 @@ var cmd = {
     help: 'Path to nodes.json file'
   }]),
   command: function command(args) {
+    utils.assignZombieRC(args);
     var nodeQuery = undefined;
     if (args.nodes) {
       nodeQuery = function nodeQuery(callback) {

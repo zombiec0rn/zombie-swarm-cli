@@ -34,6 +34,7 @@ var cmd = {
     help: 'Path to zombie plan file (default ./zombie-swarm.zplan)'
   }],
   command: function command(args) {
+    utils.assignZombieRC(args);
     var plan = JSON.parse(_fs2.default.readFileSync(args.plan));
     var report = (0, _apply2.default)(plan);
     console.log(report);

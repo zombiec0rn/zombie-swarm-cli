@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.defaultOptions = undefined;
 exports.initCmd = initCmd;
+exports.assignZombieRC = assignZombieRC;
 exports.validateArgs = validateArgs;
 exports.readSwarmConfigRaw = readSwarmConfigRaw;
 exports.formatSwarmConfig = formatSwarmConfig;
@@ -82,6 +83,17 @@ function initCmd(args) {
 
   // Add route
   route.add(args);
+}
+
+function assignZombieRC(args) {
+  var rc = {};
+  try {
+    rc = _jsYaml2.default.safeLoad(_fs2.default.readFileSync('.zombierc'));
+  } catch (e) {
+    if (e.code != 'ENOENT') throw e;
+  }
+  (0, _object2.default)(rc, args); // Overwrite passed args
+  (0, _object2.default)(args, rc); // Assign non-overwritten to args
 }
 
 var defaultOptions = [{

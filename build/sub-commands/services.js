@@ -48,6 +48,7 @@ var cmd = {
     help: 'How long to query (ms)'
   }]),
   command: function command(args) {
+    utils.assignZombieRC(args);
     utils.initCmd(args);
     utils.validateArgs(args);
     utils.querySwarmNodes(function (nodes) {
