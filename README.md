@@ -30,6 +30,10 @@ apply - apply a plan
 
 ## Changelog
 
+### 2.3.0
+
+* Support for version printing `-v` 
+
 ### 2.2.2
 
 * Fixed use if `arr.includes` breaking plan
