@@ -6,6 +6,7 @@ import assign       from 'object.assign'
 import uniq         from 'lodash.uniq'
 import find         from 'lodash.find'
 import randomString from 'random-string'
+import * as utils   from './utils'
 
 function getCurrent(nodes) {
   let services = nodes.reduce((services, node) => {
@@ -26,16 +27,10 @@ function getCurrent(nodes) {
   }, [])
 
   // Detect duplicate fingerprints
-  let duplicates = services
-    .filter(s => s.fingerprint)
-    .map(s => s.fingerprint)
-    .filter((fp, i, arr) => {
-      return arr.includes(fp, i + 1)
-    })
-
   // Randomize duplicate fingerprint (make sure they are re-evaluated)
+  let duplicates = utils.detectDuplicateFingerprints(services)
   services.forEach(s => {
-    if (duplicates.includes(s.fingerprint)) {
+    if (duplicates.indexOf(s.fingerprint) >= 0) {
       s.fingerprint = randomString()
     }
   })

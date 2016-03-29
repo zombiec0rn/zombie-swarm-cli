@@ -122,3 +122,13 @@ export function querySwarmNodes(callback, args, queryTime) {
   }, queryTime)
   mdns.query(_mdns)
 }
+
+export function detectDuplicateFingerprints(services) {
+  return services
+    .filter(s => s.fingerprint)
+    .map(s => s.fingerprint)
+    .filter((fp, i, arr) => {
+      let arrIndex = arr.indexOf(fp)
+      return arrIndex >= 0 && arrIndex != i
+    })
+}
