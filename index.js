@@ -12,6 +12,7 @@ COMMAND(s)
   ls - list swarm nodes
   plan - create a plan
   apply - apply a plan
+  services - list swarm services
 
 OPTIONS
 `,
@@ -29,11 +30,11 @@ OPTIONS
     commands : [
       require('./sub-commands/ls').default,
       require('./sub-commands/plan').default, 
-      require('./sub-commands/apply').default
+      require('./sub-commands/apply').default,
+      require('./sub-commands/services').default
     ]
 },{
     autoHelp : true
 })(process.argv.slice(2))
 
-// TODO: Version support
 // TODO: Improve err output if no node with required tag found!
