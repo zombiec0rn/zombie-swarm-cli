@@ -38,6 +38,7 @@ OPTIONS
     }
   ]),
   command: function(args) {
+    utils.assignZombieRC(args)
     let nodeQuery;
     if (args.nodes) {
       nodeQuery = (callback) => {

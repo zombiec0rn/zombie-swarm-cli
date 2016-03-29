@@ -33,6 +33,17 @@ export function initCmd(args) {
   route.add(args)
 }
 
+export function assignZombieRC(args) {
+  let rc = {}
+  try {
+    rc = yaml.safeLoad(fs.readFileSync('.zombierc'))
+  } catch(e) {
+    if (e.code != 'ENOENT') throw e
+  }
+  assign(rc, args) // Overwrite passed args
+  assign(args, rc) // Assign non-overwritten to args
+}
+
 let defaultOptions = [
   {
     name: 'interface',

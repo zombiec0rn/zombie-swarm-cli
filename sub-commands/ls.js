@@ -27,6 +27,7 @@ OPTIONS
     }
   ]),
   command: function(args) {
+    utils.assignZombieRC(args)
     utils.initCmd(args)
     utils.validateArgs(args)
     utils.querySwarmNodes((nodes) => {
