@@ -20,15 +20,39 @@ Needs to be run with `sudo` because it creates a temporary `route` to ensure mul
 sudo zombie-swarm ls --interface eth0
 ```
 
+## Commands
+
+### ls
+
+List the swarm nodes.
+
+### plan
+
+Create a plan.
+
+### apply
+
+Apply a plan.
+
+### services
+
+List services.
+
+### `.zombierc`
+
+Zombie Swarm CLI support reading a `.zombierc` file in the current directory (yml).
+
 ## Options
 
 ```
-ls  - list swarm nodes
-plan - create a plan
-apply - apply a plan
+interface - the interface to query (mdns)
 ```
 
 ## Changelog
+
+### 2.5.0
+
+* New feature - support for `.zombierc` config file (yml)
 
 ### 2.4.0
 
