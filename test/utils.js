@@ -51,3 +51,17 @@ test('detectDuplicateFingerprints', t => {
     t.true(s1_fingerprints.indexOf(d) >= 0)
   })
 })
+
+test('extractServices', t => {
+  let services = zsf.random(5)
+  let node = znf.random(1)[0]
+  services.forEach(s => {
+    s.env.push(`ZOMBIE_SWARM_FINGERPRINT=${zdiff.fingerprint(s)}`)
+  })
+  node.services = services
+  let extracted = utils.extractServices(node)
+  t.true(extracted.length == 5)
+  extracted.forEach(s => {
+    t.true(s.fingerprint != undefined)
+  })
+})

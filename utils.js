@@ -132,3 +132,17 @@ export function detectDuplicateFingerprints(services) {
       return arrIndex >= 0 && arrIndex != i
     })
 }
+
+export function extractServices(node) {
+  return (node.services || []).map(s => {
+      s.host = node
+      if (s.env) {
+        s.env.forEach(e => {
+          if (e.indexOf('ZOMBIE_SWARM_FINGERPRINT') == 0) {
+            s.fingerprint = e.split('=')[1]
+          }
+        })
+      }
+      return s
+    })
+}

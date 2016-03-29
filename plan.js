@@ -10,18 +10,7 @@ import * as utils   from './utils'
 
 function getCurrent(nodes) {
   let services = nodes.reduce((services, node) => {
-    if (!node.services) node.services = []
-    let nodeServices = node.services.map(s => {
-      s.host = node
-      if (s.env) {
-        s.env.forEach(e => {
-          if (e.indexOf('ZOMBIE_SWARM_FINGERPRINT') == 0) {
-            s.fingerprint = e.split('=')[1]
-          }
-        })
-      }
-      return s
-    })
+    let nodeServices = utils.extractServices(node)
     delete node.services
     return services.concat(nodeServices)
   }, [])
