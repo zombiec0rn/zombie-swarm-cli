@@ -30,6 +30,10 @@ apply - apply a plan
 
 ## Changelog
 
+### 2.4.0
+
+* New feature `zombie-swarm services` - list swarm services :rocket:
+
 ### 2.3.0
 
 * Support for version printing `-v` 
