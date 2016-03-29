@@ -9,6 +9,7 @@ import randomString from 'random-string'
 
 function getCurrent(nodes) {
   let services = nodes.reduce((services, node) => {
+    if (!node.services) node.services = []
     let nodeServices = node.services.map(s => {
       s.host = node
       if (s.env) {
