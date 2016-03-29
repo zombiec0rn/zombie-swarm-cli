@@ -79,12 +79,17 @@ export default function makePlan(nodes, _wanted) {
     let tagadd = find(tagadds, { id: s.id })
     if (!tagadd) return
     if (tagadd.host.hostname != s.host.hostname) {
+      // Host mismatch
       s.fingerprint = randomString()
-      //console.log('tagadd moved, garbling fingerprint')
+    }
+    else if (tagadd.fingerprint != s.fingerprint) {
+      // Fingerprint mismatch
+      // Modifications to the same service - still tagged to same host
+      s.fingerprint = randomString()
     }
     else {
+      // No mismatch - keep in current / remove from tagadds
       tagadds = tagadds.filter(ta => ta.id != s.id)
-      //console.log('tagadd same, removing from tagadds')
     }
   })
 
