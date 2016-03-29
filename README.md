@@ -30,6 +30,10 @@ apply - apply a plan
 
 ## Changelog
 
+### 2.2.2
+
+* Fixed use if `arr.includes` breaking plan
+
 ### 2.2.1
 
 * Fixed plan bug where multiple id's would cause issues (modifying existing service configs)

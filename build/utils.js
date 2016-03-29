@@ -13,6 +13,7 @@ exports.validateServices = validateServices;
 exports.readNodesConfig = readNodesConfig;
 exports.validateNodes = validateNodes;
 exports.querySwarmNodes = querySwarmNodes;
+exports.detectDuplicateFingerprints = detectDuplicateFingerprints;
 
 var _fs = require('fs');
 
@@ -167,4 +168,15 @@ function querySwarmNodes(callback, args, queryTime) {
     });
   }, queryTime);
   mdns.query(_mdns);
+}
+
+function detectDuplicateFingerprints(services) {
+  return services.filter(function (s) {
+    return s.fingerprint;
+  }).map(function (s) {
+    return s.fingerprint;
+  }).filter(function (fp, i, arr) {
+    var arrIndex = arr.indexOf(fp);
+    return arrIndex >= 0 && arrIndex != i;
+  });
 }

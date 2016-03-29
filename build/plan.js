@@ -37,10 +37,17 @@ var _randomString = require('random-string');
 
 var _randomString2 = _interopRequireDefault(_randomString);
 
+var _utils = require('./utils');
+
+var utils = _interopRequireWildcard(_utils);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function getCurrent(nodes) {
   var services = nodes.reduce(function (services, node) {
+    if (!node.services) node.services = [];
     var nodeServices = node.services.map(function (s) {
       s.host = node;
       if (s.env) {
@@ -57,17 +64,10 @@ function getCurrent(nodes) {
   }, []);
 
   // Detect duplicate fingerprints
-  var duplicates = services.filter(function (s) {
-    return s.fingerprint;
-  }).map(function (s) {
-    return s.fingerprint;
-  }).filter(function (fp, i, arr) {
-    return arr.includes(fp, i + 1);
-  });
-
   // Randomize duplicate fingerprint (make sure they are re-evaluated)
+  var duplicates = utils.detectDuplicateFingerprints(services);
   services.forEach(function (s) {
-    if (duplicates.includes(s.fingerprint)) {
+    if (duplicates.indexOf(s.fingerprint) >= 0) {
       s.fingerprint = (0, _randomString2.default)();
     }
   });
