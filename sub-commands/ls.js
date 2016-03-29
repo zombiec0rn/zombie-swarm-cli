@@ -33,7 +33,7 @@ OPTIONS
       if (args['out-file']) fs.writeFileSync(args['out-file'], JSON.stringify(nodes, null, 2))
       let table = makeTable(nodes, args)
       console.log(table.toString())
-      // TODO: Make a node 'Write file ...' if args['out-file']
+      if (args['out-file']) console.log(`# Wrote config to file: ${args['out-file']}`)
       process.exit()
     }, args, args.query) 
   }
