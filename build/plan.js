@@ -120,14 +120,18 @@ function makePlan(nodes, _wanted) {
     var tagadd = (0, _lodash4.default)(tagadds, { id: s.id });
     if (!tagadd) return;
     if (tagadd.host.hostname != s.host.hostname) {
+      // Host mismatch
       s.fingerprint = (0, _randomString2.default)();
-      //console.log('tagadd moved, garbling fingerprint')
+    } else if (tagadd.fingerprint != s.fingerprint) {
+      // Fingerprint mismatch
+      // Modifications to the same service - still tagged to same host
+      s.fingerprint = (0, _randomString2.default)();
     } else {
-        tagadds = tagadds.filter(function (ta) {
-          return ta.id != s.id;
-        });
-        //console.log('tagadd same, removing from tagadds')
-      }
+      // No mismatch - keep in current / remove from tagadds
+      tagadds = tagadds.filter(function (ta) {
+        return ta.id != s.id;
+      });
+    }
   });
 
   var plan = _zombieScheduler2.default.spread(nodes, wanted, current.concat(tagadds));
