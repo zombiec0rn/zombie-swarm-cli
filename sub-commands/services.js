@@ -2,7 +2,6 @@ import fs      from 'fs'
 import Table   from 'cli-table'
 import assign  from 'object.assign'
 import values  from 'object.values'
-import chalk   from 'chalk'
 import request from 'request'
 import * as utils from '../utils'
 require('colors')
