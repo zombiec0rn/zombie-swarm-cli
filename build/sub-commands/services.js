@@ -21,10 +21,6 @@ var _object3 = require('object.values');
 
 var _object4 = _interopRequireDefault(_object3);
 
-var _chalk = require('chalk');
-
-var _chalk2 = _interopRequireDefault(_chalk);
-
 var _request = require('request');
 
 var _request2 = _interopRequireDefault(_request);
@@ -73,7 +69,7 @@ function makeTable(services, args) {
 
   var table = new _cliTable2.default({
     head: Object.keys(formatted[0]).map(function (h) {
-      return h.green;
+      return h.cyan;
     }),
     chars: { 'top': '', 'top-mid': '', 'top-left': '', 'top-right': '',
       'bottom': '', 'bottom-mid': '', 'bottom-left': '', 'bottom-right': '',

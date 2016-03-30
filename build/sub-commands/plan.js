@@ -13,6 +13,14 @@ var _request = require('request');
 
 var _request2 = _interopRequireDefault(_request);
 
+var _cliTable = require('cli-table');
+
+var _cliTable2 = _interopRequireDefault(_cliTable);
+
+var _object = require('object.values');
+
+var _object2 = _interopRequireDefault(_object);
+
 var _plan = require('../plan');
 
 var _plan2 = _interopRequireDefault(_plan);
@@ -24,6 +32,8 @@ var utils = _interopRequireWildcard(_utils);
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+require('colors');
 
 var cmd = {
   name: 'plan',
@@ -64,12 +74,51 @@ var cmd = {
     nodeQuery(function (nodes) {
       var plan = (0, _plan2.default)(nodes, swarm.services);
       if (!args.dry) _fs2.default.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2));
-      // TODO: provide a detailed diff table
-      console.log('Adding ' + plan.add.length + ', keeping ' + plan.keep.length + ' and removing ' + plan.remove.length + '.');
+      var table = makeTable(plan, args);
+      console.log(table.toString());
+      //      console.log(`Adding ${plan.add.length}, keeping ${plan.keep.length} and removing ${plan.remove.length}.`)
       if (!args.dry) console.log('Plan written to ' + args['out-file'] + '.');
       process.exit();
     }, args, args.query);
   }
 };
+
+function makeTable(plan, args) {
+  var formatted = [];
+  var formatService = function formatService(service, action) {
+    return {
+      id: service.id,
+      image: service.image,
+      node: service.host.hostname,
+      fingerprint: service.fingerprint || 'unknown',
+      action: action
+    };
+  };
+
+  plan.remove.forEach(function (s) {
+    formatted.push(formatService(s, 'remove'.red));
+  });
+  plan.keep.forEach(function (s) {
+    formatted.push(formatService(s, 'keep'.green));
+  });
+  plan.add.forEach(function (s) {
+    formatted.push(formatService(s, 'add'.cyan));
+  });
+
+  var table = new _cliTable2.default({
+    head: Object.keys(formatted[0]).map(function (h) {
+      return h.magenta;
+    }),
+    chars: { 'top': '', 'top-mid': '', 'top-left': '', 'top-right': '',
+      'bottom': '', 'bottom-mid': '', 'bottom-left': '', 'bottom-right': '',
+      'left': '', 'left-mid': '', 'mid': '', 'mid-mid': '',
+      'right': '', 'right-mid': '', 'middle': ' ' },
+    style: { 'padding-left': 0, 'padding-right': 0 }
+  });
+  formatted.forEach(function (f) {
+    table.push((0, _object2.default)(f));
+  });
+  return table;
+}
 
 exports.default = cmd;
