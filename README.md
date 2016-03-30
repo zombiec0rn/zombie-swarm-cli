@@ -50,6 +50,10 @@ interface - the interface to query (mdns)
 
 ## Changelog
 
+### 2.6.0
+
+* Added a table output for `plan` also :tada:
+
 ### 2.5.1
 
 * Fixed issue with modification to current container would not obey tags
