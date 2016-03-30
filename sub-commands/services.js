@@ -47,7 +47,7 @@ function makeTable(services, args) {
   })
 
   let table = new Table({
-    head: Object.keys(formatted[0]).map(h => h.green),
+    head: Object.keys(formatted[0]).map(h => h.cyan),
     chars: { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': ''
           , 'bottom': '' , 'bottom-mid': '' , 'bottom-left': '' , 'bottom-right': ''
           , 'left': '' , 'left-mid': '' , 'mid': '' , 'mid-mid': ''
