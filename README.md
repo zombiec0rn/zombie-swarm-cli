@@ -50,6 +50,10 @@ interface - the interface to query (mdns)
 
 ## Changelog
 
+### 2.6.1
+
+* Improved fingerprint handling and `plan` output
+
 ### 2.6.0
 
 * Added a table output for `plan` also :tada:
