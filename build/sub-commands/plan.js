@@ -86,11 +86,18 @@ var cmd = {
 function makeTable(plan, args) {
   var formatted = [];
   var formatService = function formatService(service, action) {
+    var fingerprint = service.fingerprint || 'unknown';
+    if (action == 'add'.cyan) {
+      fingerprint = utils.extractFingerprint(service);
+    }
+    if (action == 'remove'.red) {
+      fingerprint = service.previousFingerprint || service.fingerprint;
+    }
     return {
       id: service.id,
       image: service.image,
       node: service.host.hostname,
-      fingerprint: service.fingerprint || 'unknown',
+      fingerprint: fingerprint,
       action: action
     };
   };

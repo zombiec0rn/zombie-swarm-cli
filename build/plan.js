@@ -45,6 +45,11 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function scrambleFingerprint(service) {
+  service.previousFingerprint = service.fingerprint;
+  service.fingerprint = (0, _randomString2.default)();
+}
+
 function getCurrent(nodes) {
   var services = nodes.reduce(function (services, node) {
     var nodeServices = utils.extractServices(node);
@@ -57,7 +62,7 @@ function getCurrent(nodes) {
   var duplicates = utils.detectDuplicateFingerprints(services);
   services.forEach(function (s) {
     if (duplicates.indexOf(s.fingerprint) >= 0) {
-      s.fingerprint = (0, _randomString2.default)();
+      scrambleFingerprint(s);
     }
   });
 
@@ -121,11 +126,11 @@ function makePlan(nodes, _wanted) {
     if (!tagadd) return;
     if (tagadd.host.hostname != s.host.hostname) {
       // Host mismatch
-      s.fingerprint = (0, _randomString2.default)();
+      scrambleFingerprint(s);
     } else if (tagadd.fingerprint != s.fingerprint) {
       // Fingerprint mismatch
       // Modifications to the same service - still tagged to same host
-      s.fingerprint = (0, _randomString2.default)();
+      scrambleFingerprint(s);
     } else {
       // No mismatch - keep in current / remove from tagadds
       tagadds = tagadds.filter(function (ta) {
