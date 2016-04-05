@@ -144,16 +144,22 @@ export function detectDuplicateFingerprints(services) {
     })
 }
 
+export function extractFingerprint(service) {
+  let fingerprint
+  if (service.env) {
+    service.env.forEach(e => {
+      if (e.indexOf('ZOMBIE_SWARM_FINGERPRINT') == 0) {
+        fingerprint = e.split('=')[1]
+      }
+    })
+  }
+  return fingerprint
+}
+
 export function extractServices(node) {
   return (node.services || []).map(s => {
-      s.host = node
-      if (s.env) {
-        s.env.forEach(e => {
-          if (e.indexOf('ZOMBIE_SWARM_FINGERPRINT') == 0) {
-            s.fingerprint = e.split('=')[1]
-          }
-        })
-      }
-      return s
-    })
+    s.host = node
+    s.fingerprint = extractFingerprint(s)
+    return s
+  })
 }

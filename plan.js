@@ -8,6 +8,11 @@ import find         from 'lodash.find'
 import randomString from 'random-string'
 import * as utils   from './utils'
 
+function scrambleFingerprint(service) {
+  service.previousFingerprint = service.fingerprint
+  service.fingerprint = randomString()
+}
+
 function getCurrent(nodes) {
   let services = nodes.reduce((services, node) => {
     let nodeServices = utils.extractServices(node)
@@ -20,7 +25,7 @@ function getCurrent(nodes) {
   let duplicates = utils.detectDuplicateFingerprints(services)
   services.forEach(s => {
     if (duplicates.indexOf(s.fingerprint) >= 0) {
-      s.fingerprint = randomString()
+      scrambleFingerprint(s)
     }
   })
 
@@ -80,12 +85,12 @@ export default function makePlan(nodes, _wanted) {
     if (!tagadd) return
     if (tagadd.host.hostname != s.host.hostname) {
       // Host mismatch
-      s.fingerprint = randomString()
+      scrambleFingerprint(s)
     }
     else if (tagadd.fingerprint != s.fingerprint) {
       // Fingerprint mismatch
       // Modifications to the same service - still tagged to same host
-      s.fingerprint = randomString()
+      scrambleFingerprint(s)
     }
     else {
       // No mismatch - keep in current / remove from tagadds

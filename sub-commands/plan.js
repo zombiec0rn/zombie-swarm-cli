@@ -68,11 +68,18 @@ OPTIONS
 function makeTable(plan, args) {
   let formatted = []
   let formatService = (service, action) => {
+    let fingerprint = service.fingerprint || 'unknown'
+    if (action == 'add'.cyan) {
+      fingerprint = utils.extractFingerprint(service) 
+    }
+    if (action == 'remove'.red) {
+      fingerprint = service.previousFingerprint || service.fingerprint
+    }
     return {
       id: service.id,
       image: service.image,
       node: service.host.hostname,
-      fingerprint: service.fingerprint || 'unknown',
+      fingerprint: fingerprint,
       action: action
     }
   }
