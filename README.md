@@ -50,6 +50,10 @@ interface - the interface to query (mdns)
 
 ## Changelog
 
+### 2.6.2
+
+* Republish with public access
+
 ### 2.6.1
 
 * Improved fingerprint handling and `plan` output
