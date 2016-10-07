@@ -16,7 +16,7 @@ OPTIONS
 `,
   options: utils.defaultOptions.concat([
     {
-      name: 'swarm',
+      name: 'swarm-file',
       default: './zombie-swarm.yml',
       help: 'Path to zombie-swarm file (default ./zombie-swarm.yml)'
     },
@@ -36,23 +36,23 @@ OPTIONS
       help: 'Dry run. Displays the diff table but does not write the file'
     },
     {
-      name: 'nodes',
+      name: 'nodes-file',
       help: 'Path to nodes.json file'
     }
   ]),
   command: function(args) {
     utils.assignZombieRC(args)
     let nodeQuery;
-    if (args.nodes) {
+    if (args['nodes-file']) {
       nodeQuery = (callback) => {
-        callback(JSON.parse(fs.readFileSync(args.nodes))) 
+        callback(JSON.parse(fs.readFileSync(args['nodes-file']))) 
       }
     } else {
       utils.initCmd(args)
       utils.validateArgs(args)
       nodeQuery = utils.querySwarmNodes
     }
-    let swarm = utils.readSwarmConfig(args.swarm) 
+    let swarm = utils.readSwarmConfig(args['swarm-file']) 
     nodeQuery((nodes) => {
       let plan = makePlan(nodes, swarm.services)
       if (!args.dry) fs.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2))

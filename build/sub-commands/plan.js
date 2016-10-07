@@ -39,7 +39,7 @@ var cmd = {
   name: 'plan',
   usage: 'Usage: zombie-swarm plan [OPTIONS]\n\nCreate a plan for zombie placement.\n\nOPTIONS\n',
   options: utils.defaultOptions.concat([{
-    name: 'swarm',
+    name: 'swarm-file',
     default: './zombie-swarm.yml',
     help: 'Path to zombie-swarm file (default ./zombie-swarm.yml)'
   }, {
@@ -55,22 +55,22 @@ var cmd = {
     default: false,
     help: 'Dry run. Displays the diff table but does not write the file'
   }, {
-    name: 'nodes',
+    name: 'nodes-file',
     help: 'Path to nodes.json file'
   }]),
   command: function command(args) {
     utils.assignZombieRC(args);
     var nodeQuery = undefined;
-    if (args.nodes) {
+    if (args['nodes-file']) {
       nodeQuery = function nodeQuery(callback) {
-        callback(JSON.parse(_fs2.default.readFileSync(args.nodes)));
+        callback(JSON.parse(_fs2.default.readFileSync(args['nodes-file'])));
       };
     } else {
       utils.initCmd(args);
       utils.validateArgs(args);
       nodeQuery = utils.querySwarmNodes;
     }
-    var swarm = utils.readSwarmConfig(args.swarm);
+    var swarm = utils.readSwarmConfig(args['swarm-file']);
     nodeQuery(function (nodes) {
       var plan = (0, _plan2.default)(nodes, swarm.services);
       if (!args.dry) _fs2.default.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2));

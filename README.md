@@ -50,6 +50,10 @@ interface - the interface to query (mdns)
 
 ## Changelog
 
+### 2.7.2
+
+* Modified `plan` flags to avoid collision with `--swarm`
+
 ### 2.7.1
 
 * Locked down dep versions
