@@ -174,6 +174,11 @@ function querySwarmNodes(callback, args, queryTime) {
         console.error(err);
         process.exit(1);
       }
+      if (args.swarm) {
+        nodes = nodes.filter(function (n) {
+          return n.swarm == args.swarm;
+        });
+      }
       if (nodes.length == 0) {
         console.log('No swarm nodes found on ' + args.interface + ' ¯_(ツ)_/¯');
         process.exit(0);
