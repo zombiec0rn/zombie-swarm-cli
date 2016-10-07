@@ -50,6 +50,14 @@ interface - the interface to query (mdns)
 
 ## Changelog
 
+### 2.7.1
+
+* Locked down dep versions
+
+### 2.7.0
+
+* Support for passing `--swarm` flag (also .zombierc)
+
 ### 2.6.2
 
 * Republish with public access
