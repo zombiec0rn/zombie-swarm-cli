@@ -80,7 +80,7 @@ var cmd = {
       if (!args.dry) _fs2.default.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2));
       var table = makeTable(plan, args);
       console.log(table.toString());
-      //      console.log(`Adding ${plan.add.length}, keeping ${plan.keep.length} and removing ${plan.remove.length}.`)
+      if (!args['show-keeps'] && plan.keep.length > 0) console.log('(' + ('keep'.green + ' ' + plan.keep.length) + ')');
       if (!args.dry) console.log('Plan written to ' + args['out-file'] + '.');
       process.exit();
     }, args, args.query);
@@ -118,7 +118,7 @@ function makeTable(plan, args) {
     formatted.push(formatService(s, 'add'.cyan));
   });
 
-  if (formatted.length == 0) return 'No changes required ¯_(ツ)_/¯ (' + ('keeping ' + plan.keep.length).green + ')';
+  if (formatted.length == 0) return 'No changes required ¯_(ツ)_/¯';
 
   var table = new _cliTable2.default({
     head: Object.keys(formatted[0]).map(function (h) {
