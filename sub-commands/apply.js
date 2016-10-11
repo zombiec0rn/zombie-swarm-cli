@@ -16,6 +16,10 @@ OPTIONS
       name: 'plan',
       default: './zombie-swarm.zplan',
       help: 'Path to zombie plan file (default ./zombie-swarm.zplan)'
+    },
+    {
+      name: 'always-remove',
+      help: 'Add a remove command for all services being added'
     }
   ],
   command: function(args) {
