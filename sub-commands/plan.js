@@ -36,6 +36,11 @@ OPTIONS
       help: 'Dry run. Displays the diff table but does not write the file'
     },
     {
+      name: 'show-keeps',
+      default: false,
+      help: 'Output containers being kept in plan table'
+    },
+    {
       name: 'nodes-file',
       help: 'Path to nodes.json file'
     }
@@ -87,12 +92,17 @@ function makeTable(plan, args) {
   plan.remove.forEach(s => {
     formatted.push(formatService(s, 'remove'.red))
   })
-  plan.keep.forEach(s => {
-    formatted.push(formatService(s, 'keep'.green))
-  })
+  if (args['show-keeps']) {
+    plan.keep.forEach(s => {
+      formatted.push(formatService(s, 'keep'.green))
+    })
+  }
   plan.add.forEach(s => {
     formatted.push(formatService(s, 'add'.cyan))
   })
+
+  if (formatted.length == 0)
+    return `No changes required ¯\_(ツ)_/¯ (${('keeping '+plan.keep.length).green})`
 
   let table = new Table({
     head: Object.keys(formatted[0]).map(h => h.magenta),
