@@ -63,7 +63,8 @@ OPTIONS
       if (!args.dry) fs.writeFileSync(args['out-file'], JSON.stringify(plan, null, 2))
       let table = makeTable(plan, args)
       console.log(table.toString())
-//      console.log(`Adding ${plan.add.length}, keeping ${plan.keep.length} and removing ${plan.remove.length}.`)
+      if (!args['show-keeps'] && plan.keep.length > 0)
+        console.log(`(${('keep'.green + ' ' + plan.keep.length)})`)
       if (!args.dry) console.log(`Plan written to ${args['out-file']}.`)
       process.exit()
     }, args, args.query) 
@@ -102,7 +103,7 @@ function makeTable(plan, args) {
   })
 
   if (formatted.length == 0)
-    return `No changes required ¯\_(ツ)_/¯ (${('keeping '+plan.keep.length).green})`
+    return `No changes required ¯\_(ツ)_/¯`
 
   let table = new Table({
     head: Object.keys(formatted[0]).map(h => h.magenta),

@@ -50,6 +50,10 @@ interface - the interface to query (mdns)
 
 ## Changelog
 
+### 2.8.1
+
+* Improved default output for `keeps` 
+
 ### 2.8.0
 
 * New flag :black_flag: `apply --always-remove` to always add `remove` option for adding services (in case they are not running but still exist)
