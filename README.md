@@ -50,6 +50,12 @@ interface - the interface to query (mdns)
 
 ## Changelog
 
+### 2.8.0
+
+* New flag :black_flag: `apply --always-remove` to always add `remove` option for adding services (in case they are not running but still exist)
+* Hiding `keeps` by default to keep focus on `diff` (add/remove)
+* New flag :black_flag: `plan --show-keeps` to show keeps anyway 
+
 ### 2.7.2
 
 * Modified `plan` flags to avoid collision with `--swarm`
