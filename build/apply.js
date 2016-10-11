@@ -26,15 +26,30 @@ function removeOutputFields(s) {
   return service;
 }
 
-function applyPlan(plan) {
+function applyPlan(plan, args) {
+  args = args || {};
   // perform depending on driver
   var add_cmds = _cccfDockerInstructions2.default.run(plan.add.map(removeOutputFields));
   var stop_cmds = _cccfDockerInstructions2.default.stop(plan.remove.map(removeOutputFields));
   var rm_cmds = _cccfDockerInstructions2.default.rm(plan.remove.map(removeOutputFields));
 
-  // run stop in paralell
-  // then run rm
-  // then run add
+  // TODO: run stop + rm (for each container) in paralell, then run add
 
-  return stop_cmds.concat(rm_cmds, add_cmds).join('\n');
+  if (args['always-remove']) {
+    (function () {
+      var rmIds = plan.remove.map(function (p) {
+        return p.id;
+      });
+      var addIds = plan.add.map(function (p) {
+        return p.id;
+      });
+      var allNew = plan.add.filter(function (a) {
+        return rmIds.indexOf(a.id) < 0;
+      });
+      var always_remove = _cccfDockerInstructions2.default.rm(allNew.map(removeOutputFields));
+      rm_cmds = rm_cmds.concat(always_remove);
+    })();
+  }
+
+  return stop_cmds.concat(rm_cmds, add_cmds);
 }

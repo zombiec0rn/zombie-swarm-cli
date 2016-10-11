@@ -32,12 +32,15 @@ var cmd = {
     name: 'plan',
     default: './zombie-swarm.zplan',
     help: 'Path to zombie plan file (default ./zombie-swarm.zplan)'
+  }, {
+    name: 'always-remove',
+    help: 'Add a remove command for all services being added'
   }],
   command: function command(args) {
     utils.assignZombieRC(args);
     var plan = JSON.parse(_fs2.default.readFileSync(args.plan));
-    var report = (0, _apply2.default)(plan);
-    console.log(report);
+    var report = (0, _apply2.default)(plan, args);
+    console.log(report.join('\n'));
   }
 };
 
