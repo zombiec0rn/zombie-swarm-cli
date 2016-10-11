@@ -42,7 +42,7 @@
     "subcmd": "1.0.1"
   },
   "devDependencies": {
-    "ava": "0.12.0",
+    "ava": "^0.16.0",
     "babel-preset-es2015": "6.5.0",
     "babel-register": "6.5.2",
     "bytes": "2.3.0",
