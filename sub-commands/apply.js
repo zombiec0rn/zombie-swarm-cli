@@ -21,8 +21,8 @@ OPTIONS
   command: function(args) {
     utils.assignZombieRC(args)
     let plan = JSON.parse(fs.readFileSync(args.plan))
-    let report = applyPlan(plan) 
-    console.log(report)
+    let report = applyPlan(plan, args) 
+    console.log(report.join('\n'))
   }
 }
 
