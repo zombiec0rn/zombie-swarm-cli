@@ -1,4 +1,5 @@
 import iproute from 'iproute'
+var exec = require('child_process').exec
 
 let route = { 
   type: 'unicast',
@@ -8,6 +9,13 @@ let route = {
 
 export function add(args, callback) {
   route.dev = args.interface
+  if (process.platform == 'darwin') {
+    exec('sudo route -nv add -net 224.0.0.0/4 -interface zt0', function(err, stdout, stderr) {
+      if (err) console.log(err) 
+      if (typeof callback == 'function') callback()
+    })
+    return
+  }
   iproute.route.add(route, (err) => {
     if (err) console.log(err)
     if (typeof callback == 'function') callback()
