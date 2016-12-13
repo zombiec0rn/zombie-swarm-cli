@@ -10,7 +10,7 @@ let route = {
 export function add(args, callback) {
   route.dev = args.interface
   if (process.platform == 'darwin') {
-    exec('sudo route -nv add -net 224.0.0.0/4 -interface zt0', function(err, stdout, stderr) {
+    exec(`sudo route -nv add -net ${args.to} -interface ${args.interface}`, function(err, stdout, stderr) {
       if (err) console.log(err) 
       if (typeof callback == 'function') callback()
     })
@@ -24,6 +24,13 @@ export function add(args, callback) {
 
 export function del(args, callback) {
   route.dev = args.interface
+  if (process.platform == 'darwin') {
+    exec(`sudo route -v delete -inet ${args.to} -interface ${args.interface}`, function(err, stdout, stderr) {
+      if (err) console.log(err) 
+      if (typeof callback == 'function') callback()
+    })
+    return
+  }
   iproute.route.delete(route, (err) => {
     if (err) console.log(err)
     if (typeof callback == 'function') callback()
