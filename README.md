@@ -50,6 +50,10 @@ interface - the interface to query (mdns)
 
 ## Changelog
 
+### 2.8.2
+
+* Support for OSX :tada:
+
 ### 2.8.1
 
 * Improved default output for `keeps` 
